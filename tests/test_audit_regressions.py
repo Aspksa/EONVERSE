@@ -73,3 +73,19 @@ def test_unfunded_settlement_still_generates_testable_observation():
     update_open_thinking(world)
     assert state["hypotheses"][0]["status"] == "tested"
     assert resident.memory.get("personal_causal_models")
+
+
+def test_corrupt_save_rejects_negative_and_nan_resources(tmp_path):
+    import json
+    import pytest
+    from eonverse.persistence import save_world, load_world
+    world = World(42)
+    path = tmp_path / "world.json"
+    save_world(world, path)
+    original = json.loads(path.read_text(encoding="utf-8"))
+    for invalid in (-1, float("nan"), "invalid"):
+        data = json.loads(json.dumps(original))
+        data["resources"]["food"] = invalid
+        path.write_text(json.dumps(data), encoding="utf-8")
+        with pytest.raises(ValueError):
+            load_world(path)
