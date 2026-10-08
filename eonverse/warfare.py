@@ -50,6 +50,16 @@ def update_warfare(world):
                 a.get("food_stock", 0) < 1 or b.get("food_stock", 0) < 1):
             conflict["status"] = "peace"
             conflict["winner"] = winner["id"]
+            from .civilization import territorial_owner
+            prizes = sorted(
+                (d for d in world.deposits if d["remaining"] > 0
+                 and (d.get("controller_state_id") or territorial_owner(world, d["x"], d["z"])) == loser["id"]),
+                key=lambda d: (d["kind"] not in winner.get("resource_shortages", []), d["id"])
+            )
+            if prizes:
+                prize = prizes[0]
+                prize["controller_state_id"] = winner["id"]
+                world.history.append(f"Day {world.tick}: {winner['name']} secured {prize['kind']} deposit #{prize['id']}")
             relation["trust"] = max(0, relation["trust"] - 12)
             relation["status"] = "rivalry"
             world.history.append(f"Day {world.tick}: peace between {a['name']} and {b['name']}; advantage {winner['name']}")
