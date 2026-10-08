@@ -26,22 +26,39 @@ sun.shadow.camera.left = sun.shadow.camera.bottom = -75;
 sun.shadow.camera.right = sun.shadow.camera.top = 75;
 scene.add(sun);
 
-const island = new THREE.Mesh(new THREE.CylinderGeometry(36, 42, 5, 56), new THREE.MeshStandardMaterial({color:0x4b7d4f,roughness:0.9}));
-island.position.y = -2.6;
-island.receiveShadow = true;
-scene.add(island);
-const water = new THREE.Mesh(new THREE.CylinderGeometry(100,100,0.15,96),new THREE.MeshStandardMaterial({color:0x164d78,metalness:0.15,roughness:0.25}));
-water.position.y=-5.25;
-scene.add(water);
-
-const rng = (i) => { const v = Math.sin(i * 127.1 + 78.233) * 43758.5453; return v - Math.floor(v); };
-const trunk = new THREE.CylinderGeometry(0.24,0.35,2.7,7);
-const crown = new THREE.ConeGeometry(1.6,4.8,8);
-for (let i=0;i<125;i++){
- const x=(rng(i+20)-0.5)*65,z=(rng(i+440)-0.5)*65;
- if(x*x+z*z>1030 || x*x+z*z<90)continue;
- const wood=new THREE.Mesh(trunk,new THREE.MeshStandardMaterial({color:0x6c5139}));wood.position.set(x,1.3,z);wood.castShadow=true;scene.add(wood);
- const top=new THREE.Mesh(crown,new THREE.MeshStandardMaterial({color:i%2?0x236742:0x2d8152}));top.position.set(x,4.7,z);top.castShadow=true;scene.add(top);
+const terrainGroup = new THREE.Group();
+scene.add(terrainGroup);
+const tileGeometry = new THREE.BoxGeometry(1, 1, 1);
+const biomeMaterials = {
+ water:new THREE.MeshStandardMaterial({color:0x195e88,roughness:0.28,metalness:0.12}),
+ beach:new THREE.MeshStandardMaterial({color:0xdac18b,roughness:0.92}),
+ grassland:new THREE.MeshStandardMaterial({color:0x539b60,roughness:0.98}),
+ forest:new THREE.MeshStandardMaterial({color:0x226947,roughness:0.98}),
+ highland:new THREE.MeshStandardMaterial({color:0x728477,roughness:1})
+};
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(85,85),new THREE.MeshStandardMaterial({color:0x0c3c62}));
+ground.rotation.x=-Math.PI/2; ground.position.y=-2.5; scene.add(ground);
+let terrainReady=false;
+function buildTerrain(terrain){
+ if(terrainReady || !terrain?.tiles)return;
+ terrainReady=true;
+ const grid=terrain.tiles, half=Math.floor(terrain.size/2);
+ const grouped={};
+ for(let z=0;z<grid.length;z++)for(let x=0;x<grid[z].length;x++){
+   const t=grid[z][x];
+   (grouped[t.biome]??=[]).push({x:x-half,z:z-half,height:t.height});
+ }
+ for(const [biome,locations] of Object.entries(grouped)){
+   const mesh=new THREE.InstancedMesh(tileGeometry,biomeMaterials[biome],locations.length);
+   const matrix=new THREE.Matrix4();
+   locations.forEach((v,i)=>{
+     matrix.compose(new THREE.Vector3(v.x,v.height/2-0.4,v.z),new THREE.Quaternion(),new THREE.Vector3(1,v.height+1,1));
+     mesh.setMatrixAt(i,matrix);
+   });
+   mesh.instanceMatrix.needsUpdate=true;
+   mesh.receiveShadow=true;
+   terrainGroup.add(mesh);
+ }
 }
 const people=new Map(), houses=new Map();
 const personGeo=new THREE.CapsuleGeometry(0.42,1.05,4,8);
@@ -51,20 +68,21 @@ const wallMat=new THREE.MeshStandardMaterial({color:0xd4ba8e});
 let latest={residents:[]};
 function synchronize(data){
  latest=data;
+ buildTerrain(data.terrain);
  for(const [id,el] of Object.entries({population:data.population,tick:data.tick,food:data.resources.food,wood:data.resources.wood})){document.getElementById(id).textContent=el;}
  document.getElementById("history").innerHTML=data.history.slice(-6).reverse().map(t=>`<div>• ${t.replaceAll("<","&lt;")}</div>`).join("") || "Первые жители исследуют остров...";
  const active=new Set(data.residents.map(p=>p.id));
  for(const [id,mesh] of people)if(!active.has(id)){scene.remove(mesh);people.delete(id);}
  for(const p of data.residents){
   if(!people.has(p.id)){const mesh=new THREE.Mesh(personGeo,personMat);mesh.castShadow=true;scene.add(mesh);people.set(p.id,mesh);}
-  const mesh=people.get(p.id);mesh.userData.target=new THREE.Vector3(p.x,1.1,p.z);
+  const mesh=people.get(p.id);mesh.userData.target=new THREE.Vector3(p.x,1.65,p.z);
  }
  for(const h of data.buildings)if(!houses.has(h.id)){
   const group=new THREE.Group(),wall=new THREE.Mesh(new THREE.BoxGeometry(3,2.8,3),wallMat);
   wall.position.y=1.4;wall.castShadow=true;group.add(wall);
   const roof=new THREE.Mesh(new THREE.ConeGeometry(2.65,2,4),roofMat);
   roof.rotation.y=Math.PI/4;roof.position.y=3.55;roof.castShadow=true;group.add(roof);
-  group.position.set(h.x,0,h.z);scene.add(group);houses.set(h.id,group);
+  group.position.set(h.x,0.5,h.z);scene.add(group);houses.set(h.id,group);
  }
 }
 async function connect(){
