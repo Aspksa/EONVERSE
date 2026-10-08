@@ -9,7 +9,7 @@ def test_rulers_and_state_policy(tmp_path):
     assert world.states
     for state in world.states:
         assert state["government"] in ("council", "monarchy", "republic")
-        assert state["law"] in ("balanced", "development", "conservation")
+        assert state["law"] in ("balanced", "development", "conservation", "mutual_aid")
         assert state["ruler_id"] is None or any(
             r.id == state["ruler_id"] for r in world.residents
         )
