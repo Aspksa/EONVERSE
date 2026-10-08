@@ -11,7 +11,9 @@ NAMES = ("Aster", "Velora", "Orion", "Thalor", "Eldara", "Solmere")
 def update_civilizations(world):
     """Found at most one settlement per 50 ticks and assign territorial influence."""
     if world.tick % 50 == 0 and len(world.settlements) < 6:
-        homes = world.buildings
+        from .intercultural import found_resident_settlement
+        founded = found_resident_settlement(world)
+        homes = [] if founded else world.buildings
         for home in sorted(homes, key=lambda h: h["id"]):
             if all(hypot(home["x"] - city["x"], home["z"] - city["z"]) >= 12
                    for city in world.settlements):
