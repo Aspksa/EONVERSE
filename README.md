@@ -105,3 +105,7 @@ World generation chooses diverse finite or renewable natural deposits. Manufactu
 State-funded expeditions discover nearby hidden deposits, research raises extraction productivity, and factories consume stock to produce steel, tools and machines in deterministic recipe stages. Production causes pollution and states may pay for cleanup; industrial pollution slows forest regrowth. After abstract wars, a victor may gain control of one surviving deposit rather than silently creating any minerals. JSON saves retain research, industrial output and deposit control in state/deposit records.
 
 This is a prototype, not yet a detailed ecology, real caravans, staffed expedition travel, ore-smelting technology tree, or graphical factories. Existing older resident food/wood loops still need integration with the finite resource accounting system.
+
+## v0.5.1 — Finite household harvesting (proposed)
+
+Legacy resident foraging and logging, together with basic farm output, now transfer quantities from the world's finite/regrowing grain and timber deposits instead of creating those resources without a source. If deposits are exhausted, these sources produce nothing. The underlying state extraction model continues to use the same deposits. Food/wood accounting is a first integration step; downstream economic demand, regional reachability and water dependency will need later refinement.
