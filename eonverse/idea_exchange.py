@@ -50,7 +50,9 @@ def update_idea_exchange(world):
                 state = state_by_id.get(territorial_owner(world,sender.x,sender.z))
                 if state is None or territorial_owner(world,recipient.x,recipient.z) != state["id"]:
                     continue
-                claims = state.get("causal_models", {})
+                # Share only hypotheses the sender personally tested, not
+                # every state-level result under a borrowed identity.
+                claims = sender.memory.get("personal_causal_models", {})
                 if not claims:
                     continue
                 key = sorted(claims, key=lambda k:(-claims[k].get("confidence",0),k))[0]
