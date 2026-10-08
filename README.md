@@ -81,3 +81,9 @@ State stability now responds to treasury, food reserves and wars. Repeated insta
 ## v0.4.7 — Observer and civilization chronicle (proposed)
 
 The dashboard now lists states and their treasury, supports a camera jump to the first capital, resets to world overview and provides a client-side stop-frame. The stop-frame freezes the viewer **only**; the Python world continues simulating. Up to 500 events are retained in a JSON-saved chronicle and the latest ten are visible. Future God Mode actions require server-side authorization, command validation and an audit trail.
+
+## v0.4.8 — Natural resources and scarcity (proposed)
+
+Seeded deposits include iron, copper, gold, coal, stone, timber, freshwater and grain. Mines have finite reserves while renewable resources regenerate up to local capacity. States gain inventories based on territorial influence; essential grain and freshwater upkeep can create shortages. The API provides resource deposits and a list of potential resource disputes. In the existing abstract warfare logic, scarcity can become another *conditional* reason for conflict if trust is low and both states can afford war.
+
+Current limits: no 3D mine models, production chains, physical trade, treaties explicitly exchanging resources, or simulation of battlefield ownership change. Disputes are pressure signals, not automatic capture of mineral deposits. The resource system is deliberately incremental and retains saved quantities across restart.
