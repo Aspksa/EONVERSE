@@ -73,3 +73,7 @@ Every 40 simulation ticks, pairs of states assess geographic proximity, existing
 ## v0.4.5 — Abstract warfare (proposed)
 
 Rival nearby states with sufficient population and treasury can enter a war. Conflicts proceed in deterministic rounds that consume state funds and food, record abstract losses and conclude with a peace state. War outcomes appear in the history and are preserved in save files. This is an abstract strategic prototype: no military units, siege simulation, physical casualties or territorial annexation yet.
+
+## v0.4.6 — Political crises and federations (proposed)
+
+State stability now responds to treasury, food reserves and wars. Repeated instability triggers a government reform and leadership vacancy. Stable allies can voluntarily federate, transferring financial assets and settlement allegiance while retaining a dissolved state for historical references. Secession, civil-war combat, new country naming and realistic political factions are deferred.
