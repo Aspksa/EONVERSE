@@ -153,3 +153,7 @@ Adult inhabitants propose bounded civic policies, organize into preference facti
 ## v0.6.4 — Procedural experimental evolution
 
 Researchers combine pairs of abstract principles to construct prototypes. Every experiment consumes resource stock and funds, records failed and successful trials, and awards a small, bounded productivity benefit for validated results. Family members inherit a fraction of accumulated skills. Outcomes are reproducible and stored in state save data. This is an abstract innovation model rather than real-world engineering or unconstrained autonomous invention.
+
+## v0.6.5 — Scientific civilization and herbal medicine (proposed)
+
+States can fund workshops, schools and laboratories. Schools teach local pupils from experienced residents, workshops develop builders, and laboratories develop scholars. Successful technologies spread through operational, non-blockaded trade links to states with schools. Three fictional medicinal herb types grow in geographically fixed renewable patches; states pay to collect them, train medical knowledge in schools, and supply care for residents with reduced health when a nearby knowledgeable healer is present. Health, institution progress and herb stock persist across save/load. These are stylized gameplay values, not real medical advice or validated pharmacology; treatments and research are simplified rather than physically simulated.
