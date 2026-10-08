@@ -20,29 +20,11 @@ def update_public_health(world):
         city_people = [p for p in people if territorial_owner(world, p.x, p.z) == state["id"]]
         if not city_people:
             continue
-        # Policy, investment and maintenance determine sanitation.
-        upkeep = 3
-        if state.get("treasury", 0) >= upkeep:
-            state["treasury"] = round(state["treasury"] - upkeep, 2)
-            improvement = 5 if state.get("law") in ("conservation", "mutual_aid") else 3
-            state["sanitation"] = min(100, state["sanitation"] + improvement)
-        else:
-            state["sanitation"] = max(0, state["sanitation"] - 5)
-        if not state["hospital"] and "school" in state.get("institutions", []) and state.get("treasury", 0) >= 35:
-            state["treasury"] = round(state["treasury"] - 35, 2)
-            state["hospital"] = True
-            world.history.append(f"Day {world.tick}: hospital founded in {state['name']}")
-        if state["hospital"] and "laboratory" in state.get("institutions", []) and state.get("treasury", 0) >= 4:
-            state["treasury"] = round(state["treasury"] - 4, 2)
-            state["medical_research"] = min(10, state["medical_research"] + .2)
-        if "laboratory" in state.get("institutions", []) and state.get("medicinal_inventory", 0) >= 2 and state.get("treasury", 0) >= 3:
-            state["medicinal_inventory"] -= 2
-            state["treasury"] = round(state["treasury"] - 3, 2)
-            state["herb_cultivation"] = min(5, state["herb_cultivation"] + .1)
+        # No automatic hospital construction, research or prescribed health program.
+        # Residents alter the environment through their own recorded experiments.
+        state["sanitation"] = max(0, state["sanitation"] - 1)
         for patient in city_people:
             patient.hygiene = max(0, patient.hygiene - 2)
-            if state["sanitation"] >= 60 and state.get("treasury", 0) >= 1:
-                patient.hygiene = min(100, patient.hygiene + 5)
             # Low hygiene can seed a fictional illness by a deterministic event.
             if not patient.infection and patient.hygiene < 35 and (world.tick // 20 + patient.id) % 9 == 0:
                 patient.infection = {"strain": 0, "severity": 1, "duration": 0}
@@ -72,6 +54,8 @@ def update_public_health(world):
                 if target.id == source.id or target.infection or hypot(target.x-source.x, target.z-source.z) > 2:
                     continue
                 risk = max(1, (100 - state["sanitation"]) // 15 + (100 - target.hygiene) // 20)
+                if state.get("contact_reduction_until", 0) > world.tick:
+                    risk = max(0, risk - 4)
                 if (world.tick // 20 + source.id * 13 + target.id * 7) % 18 < risk:
                     target.infection = {"strain": source.infection["strain"], "severity": source.infection["severity"], "duration": 0}
                     state["outbreaks"] += 1

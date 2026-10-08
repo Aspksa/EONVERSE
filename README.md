@@ -161,3 +161,7 @@ States can fund workshops, schools and laboratories. Schools teach local pupils 
 ## v0.6.6 — Sanitation, hospitals and generations of science (proposed)
 
 Fictional health simulation includes personal hygiene, funded municipal sanitation, a school-dependent hospital, doctor-assisted care, abstract local infection spread and bounded mutation counters (no real biology or genetic sequences). Hospitals with laboratories fund abstract medical research; herb cultivation consumes inventory and funds. Schools preserve successful inventions in an archive and, with workshops and resources, improve prototypes through five generations, even when original inventors are no longer alive. Disease, civic healthcare and research outcomes are gameplay abstractions, not real medical guidance.
+
+## v0.6.7 — Emergent intervention discovery (proposed)
+
+No automatic public health institution construction or mandatory sanitation spending. Adult inhabitants experiment with generic environmental affordances, compare delayed changes in health and hygiene, keep evidence and reuse practices with more promising results. Local experiment observations persist in each state's save data. The simulator still defines the primitive actions and simplified outcome model: it does **not** spontaneously invent unconstrained institutions, language, tools or biological remedies. An open-ended compositional action planner and social institution formation are future extensions.
