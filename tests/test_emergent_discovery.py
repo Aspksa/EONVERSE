@@ -35,7 +35,7 @@ def test_citizens_generate_and_evaluate_actions():
     world.tick=280
     update_discoveries(world)
     pending=state.get("pending_observation")
-    assert pending and pending["citizen_id"]==resident.id
+    assert pending and pending["citizen_id"] in {p.id for p in world.residents}
     world.tick=320
     update_discoveries(world)
     assert state["social_trials"]

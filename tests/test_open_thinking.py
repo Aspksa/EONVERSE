@@ -22,6 +22,7 @@ def test_questions_are_recorded_and_tested():
     resident.x,resident.z=capital["x"],capital["z"]
     resident.age=25
     state["treasury"]=100
+    state["medicinal_inventory"]=10
     state["hypotheses"]=[]
     state.pop("pending_hypothesis",None)
     world.tick=280

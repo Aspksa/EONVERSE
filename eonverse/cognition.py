@@ -25,6 +25,9 @@ def choose_goal(world, person):
         habit = habits.get("gather_" + kind, habits.get(action, 0))
         evidence = beliefs.get(action + ":" + need, .5)
         score += 14 * (priority - .5) + 3 * (evidence - .5) + min(5, habit) * .6
+        # With an empty pantry and low personal food, prioritize real grain.
+        if kind == "grain" and (person.food < 45 or world.food_supply < 15):
+            score += 28
         candidates.append((score-distance*.9, -distance, -deposit["id"], deposit))
     if candidates:
         _, _, _, deposit = max(candidates, key=lambda entry: entry[:3])
@@ -57,7 +60,7 @@ def think(world, person):
 def act(world, person):
     """Execution consumes finite world stocks or existing supplies."""
     if person.goal=="eat" and world.food_supply>0:
-        qty=min(8, world.food_supply, 100-person.food)
+        qty=min(12, world.food_supply, 100-person.food)
         world.food_supply-=qty
         person.food+=qty
         person.role="eating"
@@ -74,6 +77,11 @@ def act(world, person):
             else:
                 world.wood_supply+=quantity
             person.role="farmer" if kind=="grain" else "woodcutter"
+            if kind=="grain" and person.food < 35:
+                # Consume harvested grain directly; never create food twice.
+                meal=min(quantity, 35-person.food)
+                world.food_supply-=meal
+                person.food+=meal
         else:
             person.role="travelling"
     elif person.goal == "migrate":

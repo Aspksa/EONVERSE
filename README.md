@@ -225,3 +225,7 @@ Adult residents can compare locally observed renewable resources and climate aga
 ## v0.9.6–v0.9.9 — Migration encounters and settlement origins
 
 When migrants encounter nearby residents, social trust controls limited exchanges of skills and beliefs; low trust records disagreement without scripted violence or assimilation. Where a cluster of two or more adults and dwellings emerges beyond existing settlements, residents can found a new town, superseding automatic house-only founding when the criteria are met. Historical settlement founding still has a legacy fallback. These are bounded social models, not natural-language culture or fully emergent institution design.
+
+## v1.0.0 — Survival and scientific causality hardening
+
+Scarcity-biased gathering favors real grain when individual or shared food is low. Immediate consumption of gathered grain preserves total food mass. When the state treasury is short, curious adults may pay for a finite intervention from existing personal coins, but no experiment runs without enough funding and supplies prerequisites. Causal claims exchanged by residents must originate from that sender's own experimental outcomes, rather than impersonating state-level evidence. These fixes require further multi-seed long-run survival and counterfactual validation: passing unit tests alone does not prove autonomy or robust population survival.
