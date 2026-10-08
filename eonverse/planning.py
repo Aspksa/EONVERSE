@@ -5,6 +5,7 @@ Plans are composed from generic world affordances, not civilization milestones.
 from .civilization import territorial_owner
 from .open_thinking import observe, CONTROLS, COST, apply_probe
 from .causal_memory import choose_control
+from .strategy_learning import update_strategy_memory, alternative_controls
 
 MAX_STEPS=3
 MAX_PLAN_RECORDS=16
@@ -25,7 +26,7 @@ def propose_plan(world, state, person, measurements):
         ranked.append((value,-CONTROLS.index(control),control))
     ranked.sort(reverse=True)
     first=choose_control(target,models,CONTROLS,person.id)
-    controls=[first]+[item[2] for item in ranked if item[2]!=first]
+    controls=alternative_controls(person,target,[first]+[item[2] for item in ranked if item[2]!=first])
     funds=state.get("treasury",0)
     steps=[]
     for control in controls:
@@ -59,6 +60,7 @@ def update_planning(world):
                 step=plan["steps"][pending["index"]]
                 step["observed_change"]=change
                 step["status"]="evaluated"
+                update_strategy_memory(state,owner,plan["target"],step["control"],change)
                 plan["last_observation"]=measurements[plan["target"]]
                 if change < -2:
                     plan["failures"]+=1
@@ -79,6 +81,7 @@ def update_planning(world):
                     else:
                         plan["failures"]+=1
                         step["status"]="blocked"
+                        update_strategy_memory(state,owner,plan["target"],step["control"],-3,blocked=True)
                         if plan["failures"]>=2:plan["status"]="revised"
                 else:
                     plan["status"]="completed"
