@@ -113,3 +113,7 @@ Legacy resident foraging and logging, together with basic farm output, now trans
 ## v0.5.2 — Territorial logistics (proposed)
 
 Resident grain and timber gathering now requires a natural deposit within nine terrain units; individual farms harvest only their local surroundings. Inter-state resource deals require capitals within 36 world units, consume funds for distance-based transport, respect a 500-unit receiving warehouse limit, and create shipments delivered over several simulation ticks. In-transit cargo persists across saves. The warehouse is represented by the existing state inventory and is an abstract capacity, not a separate 3D building yet. State mine output remains direct-to-inventory and does not yet have physical transport, caravans, or route hazards.
+
+## v0.5.3 — Roads, caravans and trade blockades (proposed)
+
+States can jointly fund up to three road improvements. Better roads increase route capacity, reduce transport costs and travel time. Trade consumes shipment capacity; cargos travel over multiple simulation ticks and can incur deterministic losses on dangerous routes. Active bilateral wars and rivalries block new exchanges, while war pauses existing deliveries. Roads, lost cargo and in-transit shipments persist across restarts. The transport layer models abstract caravans rather than rendered moving units or physical route pathfinding.
