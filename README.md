@@ -38,3 +38,12 @@ Open http://127.0.0.1:8000/ . For tests: `pip install pytest && python -m pytest
 - v0.5: optional cloud AI for selected strategic decisions, server-side API key storage, budget limits and action validation
 
 **Current limitations:** A proof of concept, not yet a complete evolving civilization. Server restarts reset the state; simulated residents follow local rules, not an LLM.
+
+
+## v0.2.0 — Biomes and navigation (proposed)
+
+A reproducible 65×65 terrain grid creates forest, grassland, beaches, highlands and water based on the world seed. Residents spawn on traversable land, select destinations, and follow four-neighbor BFS routes that avoid impassable water and highland tiles. The browser renders terrain using GPU instancing rather than thousands of separate draw calls.
+
+Tests in `tests/test_terrain.py` cover seeded generation, safe routes and residents remaining on land.
+
+**Next action:** confirm GitHub CI, then merge v0.1.0 first and this v0.2.0 pull request second. Future work: height-aware models, better pathfinding, save/load, dynamic forestry and agent decisions.
