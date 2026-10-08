@@ -217,3 +217,7 @@ Locally observed organisms and soil now influence regeneration of nearby vegetal
 ## v0.8.9–v0.9.1 — Dynamic environment and adaptation
 
 Seeded regional moisture and temperature vary slowly over simulation time. Environmental stress modifies local soil and organism energy; soil already influences renewable-resource regeneration. Residents remember environmental observations and adjust need priorities in response to change, retaining freedom to select actions from the current bounded planner. These are deliberately abstract seasonal dynamics, not realistic weather forecasting, full hydrology or unrestricted planning.
+
+## v0.9.2–v0.9.5 — Migration and adaptive settlements
+
+Adult residents can compare locally observed renewable resources and climate against other reachable settlements and decide to migrate when expected benefits exceed travel costs and their personal caution threshold. Movement uses the world pathfinding system. Trusted residents at shared settlements transfer demonstrated knowledge; settlements keep bounded population/environment histories and recompute influence from occupancy. These mechanics enable distinct local paths of development without prescribed migrations or fixed civilization milestones. Migration remains an abstract goal selection rather than comprehensive demographic or political modeling.
