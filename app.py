@@ -8,9 +8,14 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from eonverse.world import World
+from eonverse.persistence import load_world, save_world
 
 ROOT = Path(__file__).resolve().parent
-world = World()
+SAVE_PATH = ROOT / 'data' / 'world.json'
+try:
+    world = load_world(SAVE_PATH) if SAVE_PATH.exists() else World()
+except (OSError, ValueError, KeyError, TypeError) as exc:
+    raise RuntimeError(f'Invalid world save {SAVE_PATH}: {exc}') from exc
 clients: set[WebSocket] = set()
 
 
@@ -18,6 +23,8 @@ async def universe_loop():
     while True:
         await asyncio.sleep(1)
         world.step()
+        if world.tick % 30 == 0:
+            save_world(world, SAVE_PATH)
         snapshot = world.snapshot()
         for client in tuple(clients):
             try:
@@ -32,6 +39,7 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
+        save_world(world, SAVE_PATH)
         task.cancel()
         await asyncio.gather(task, return_exceptions=True)
 
