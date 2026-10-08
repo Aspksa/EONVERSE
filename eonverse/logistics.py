@@ -16,10 +16,23 @@ def update_shipments(world):
         return
     active = {s["id"]: s for s in world.states if not s.get("dissolved")}
     pending = []
+    from .transport import route_status
     for shipment in world.shipments:
+        sender, receiver = active.get(shipment["from"]), active.get(shipment["to"])
+        route = route_status(world, sender, receiver) if sender and receiver else None
+        if route and route["blocked"]:
+            pending.append(shipment)
+            continue
         shipment["remaining_ticks"] -= 10
         if shipment["remaining_ticks"] > 0:
             pending.append(shipment)
+            continue
+        risk = shipment.get("risk", 0)
+        if risk and (world.tick + shipment["from"] * 7 + shipment["to"] * 11) % 13 < risk:
+            shipment["units"] -= 1
+            world.lost_shipments += 1
+            world.history.append(f"Day {world.tick}: cargo lost in transit")
+        if shipment["units"] <= 0:
             continue
         recipient = active.get(shipment["to"])
         if recipient is None:
