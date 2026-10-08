@@ -1,6 +1,7 @@
 """Finite mineral deposits and renewable natural resources for EONVERSE."""
 from math import hypot
 from random import Random
+from .resource_catalog import RAW_RESOURCES, MATERIAL_CATALOG
 
 CATALOG = {
     "iron": {"renewable": False, "value": 6, "strategic": True},
@@ -20,11 +21,15 @@ def create_deposits(seed, terrain):
     positions = [(x, z) for z in range(-26, 27, 3) for x in range(-26, 27, 3)
                  if terrain.walkable(x, z)]
     rng.shuffle(positions)
-    for idx, kind in enumerate(list(CATALOG) * 4):
+    # Guarantee core gameplay resources; sample a wider geological/ecological pool.
+    additional = [k for k in RAW_RESOURCES if k not in CATALOG]
+    rng.shuffle(additional)
+    kinds = list(CATALOG) * 2 + additional[:min(100, len(additional))]
+    for idx, kind in enumerate(kinds):
         if idx >= len(positions):
             break
         x, z = positions[idx]
-        renewable = CATALOG[kind]["renewable"]
+        renewable = RAW_RESOURCES[kind]["renewable"]
         capacity = rng.randint(60, 160) if renewable else rng.randint(80, 500)
         deposits.append({"id": idx + 1, "kind": kind, "x": x, "z": z,
                          "capacity": capacity, "remaining": capacity,
