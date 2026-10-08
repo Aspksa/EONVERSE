@@ -38,5 +38,6 @@ def load_world(path):
     world.settlements = data.get("settlements", [])
     world.states = data.get("states", [])
     world.trade_routes = {(item["from"], item["to"]): item["transactions"] for item in data.get("trade_routes", [])}
+    world.relations = {(item["from"], item["to"]): {k: v for k,v in item.items() if k not in ("from", "to")} for item in data.get("relations", [])}
     world.rng.setstate(_tuple_tree(data["rng_state"]))
     return world
