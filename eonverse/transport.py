@@ -1,6 +1,7 @@
 """Deterministic trade infrastructure, route risk and embargoes."""
 from math import hypot
-from .path_network import find_route, classify_path, biome_at
+from .path_network import find_route, classify_path, biome_at, find_sea_lane
+from .road_grid import coastal_access
 
 def route_status(world, a, b):
     """Physical proxy for infrastructure between two state capitals."""
@@ -21,14 +22,26 @@ def route_status(world, a, b):
     path = find_route(world.terrain, (first["x"], first["z"]), (second["x"], second["z"]), "land")
     if not path:
         path = find_route(world.terrain, (first["x"], first["z"]), (second["x"], second["z"]), "sea")
+    # Only water cells are navigable by ships; port access must exist at both ends.
+    port_a=coastal_access(world.terrain,first["x"],first["z"])
+    port_b=coastal_access(world.terrain,second["x"],second["z"])
+    sea_path=find_sea_lane(world.terrain,port_a,port_b) if port_a and port_b else []
+    if sea_path and (not path or len(sea_path) < len(path) * 1.25):
+        path=[(round(first["x"]),round(first["z"])),
+              (port_a["x"],port_a["z"]),*sea_path,
+              (port_b["x"],port_b["z"]),
+              (round(second["x"]),round(second["z"]))]
+        maritime=True
+    else:
+        maritime=False
     if not path:
         return None
     samples = [{"x": x, "z": z, "biome": biome_at(world.terrain, x, z)}
                for x, z in path]
-    kind = classify_path(world.terrain, path)
+    kind = "sea" if maritime else classify_path(world.terrain, path)
     distance = len(path) - 1
     return {
-        "mode": kind, "waypoints": samples,
+        "mode": kind, "waypoints": samples, "ship": maritime,
         "built": operational, "condition": condition,
         "ports": asset.get("ports", 0) if asset else 0,
         "bridges": asset.get("bridges", 0) if asset else 0,
