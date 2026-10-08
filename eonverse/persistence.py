@@ -46,6 +46,7 @@ def load_world(path):
     world.settlements = data.get("settlements", [])
     world.states = data.get("states", [])
     world.communities = data.get("communities", [])
+    world.associations = data.get("associations", [])
     world.herb_patches = data.get("herb_patches", world.herb_patches)
     world.trade_routes = {(item["from"], item["to"]): item["transactions"] for item in data.get("trade_routes", [])}
     world.relations = {(item["from"], item["to"]): {k: v for k,v in item.items() if k not in ("from", "to")} for item in data.get("relations", [])}
