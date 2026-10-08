@@ -8,6 +8,9 @@ def choose_goal(world, person):
     if person.energy < 35:
         return "rest", None
     candidates = []
+    priorities = person.memory.get("preferences", {})
+    habits = person.memory.get("habits", {})
+    beliefs = person.memory.get("beliefs", {})
     for deposit in world.deposits:
         if deposit["kind"] not in ("grain", "timber") or deposit["remaining"] <= 0:
             continue
@@ -15,6 +18,13 @@ def choose_goal(world, person):
             continue
         distance = hypot(person.x-deposit["x"], person.z-deposit["z"])
         score = (25 if deposit["kind"] == "grain" and world.food_supply < 45 else 12) if deposit["kind"]=="grain" else (20 if world.wood_supply < 35 else 8)
+        kind = deposit["kind"]
+        need = "food" if kind == "grain" else "energy"
+        priority = priorities.get(need, .5)
+        action = "gather_food" if kind == "grain" else "gather_wood"
+        habit = habits.get("gather_" + kind, habits.get(action, 0))
+        evidence = beliefs.get(action + ":" + need, .5)
+        score += 14 * (priority - .5) + 3 * (evidence - .5) + min(5, habit) * .6
         candidates.append((score-distance*.9, -distance, -deposit["id"], deposit))
     if candidates:
         _, _, _, deposit = max(candidates, key=lambda entry: entry[:3])
@@ -25,6 +35,11 @@ def choose_goal(world, person):
 def think(world, person):
     """Maintain a short bounded memory and plan routes to selected deposits."""
     goal, deposit = choose_goal(world, person)
+    migrating = bool(person.path and person.memory.get("migration_destination") is not None)
+    # Eating/resting is an interruption, not cancellation of a long journey.
+    if migrating and goal not in ("eat", "rest"):
+        person.goal = "migrate"
+        return "migrate"
     person.goal = goal
     if deposit is not None:
         person.memory["last_resource"] = deposit["kind"]
@@ -34,7 +49,7 @@ def think(world, person):
             route = world.terrain.route((person.x, person.z), target)
             person.path = route[1:] if route else []
             person.memory["target"] = list(target)
-    elif goal != "explore":
+    elif goal != "explore" and not migrating:
         person.path = []
     return goal
 
@@ -61,5 +76,9 @@ def act(world, person):
             person.role="farmer" if kind=="grain" else "woodcutter"
         else:
             person.role="travelling"
+    elif person.goal == "migrate":
+        person.role="travelling"
+        if not person.path:
+            person.memory.pop("migration_destination", None)
     else:
         person.role="explorer"
