@@ -1,5 +1,6 @@
 """Run with: uvicorn app:app --reload"""
 import asyncio
+import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -18,15 +19,21 @@ try:
 except (OSError, ValueError, KeyError, TypeError) as exc:
     raise RuntimeError(f'Invalid world save {SAVE_PATH}: {exc}') from exc
 clients: set[WebSocket] = set()
+MAX_CLIENTS = 64
+logger = logging.getLogger(__name__)
 
 
 async def universe_loop():
     while True:
         await asyncio.sleep(1)
-        world.step()
-        if world.tick % 30 == 0:
-            save_world(world, SAVE_PATH)
-        snapshot = world.snapshot()
+        try:
+            world.step()
+            if world.tick % 30 == 0:
+                save_world(world, SAVE_PATH)
+            snapshot = world.snapshot()
+        except Exception:
+            logger.exception("World simulation tick failed")
+            continue
         for client in tuple(clients):
             try:
                 await client.send_json(snapshot)
@@ -66,6 +73,9 @@ async def state():
 
 @app.websocket("/ws/world")
 async def websocket_world(websocket: WebSocket):
+    if len(clients) >= MAX_CLIENTS:
+        await websocket.close(code=1013, reason="Too many observers")
+        return
     await websocket.accept()
     clients.add(websocket)
     try:
