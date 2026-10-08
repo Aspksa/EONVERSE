@@ -67,7 +67,32 @@ const roofMat=new THREE.MeshStandardMaterial({color:0x8d443b});
 const wallMat=new THREE.MeshStandardMaterial({color:0xd4ba8e});
 
 const routeMeshes=new Map(), caravanMeshes=new Map(), structureMeshes=new Map();
+const roadTileMeshes=new Map(), portMeshes=new Map();
+const roadTileMaterial=new THREE.MeshStandardMaterial({color:0x958870,roughness:.98});
+const portMaterial=new THREE.MeshStandardMaterial({color:0x54adc7,roughness:.7});
 function refreshTransport(data){
+ const visibleRoads=new Set();
+ for(const cell of data.road_tiles||[]){
+  const id=cell.x+","+cell.z;
+  visibleRoads.add(id);
+  if(roadTileMeshes.has(id))continue;
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(.55,.13,.55),roadTileMaterial);
+  mesh.position.set(cell.x,1.05,cell.z);
+  scene.add(mesh);roadTileMeshes.set(id,mesh);
+ }
+ for(const [id,mesh] of roadTileMeshes)if(!visibleRoads.has(id)){scene.remove(mesh);roadTileMeshes.delete(id);}
+ const visiblePorts=new Set();
+ for(const port of data.ports||[]){
+  if(!port.built)continue;
+  const id=String(port.state_id);
+  visiblePorts.add(id);
+  if(portMeshes.has(id))continue;
+  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(.6,.8,1.1,8),portMaterial);
+  mesh.position.set(port.x,1.15,port.z);
+  scene.add(mesh);portMeshes.set(id,mesh);
+ }
+ for(const [id,mesh] of portMeshes)if(!visiblePorts.has(id)){scene.remove(mesh);portMeshes.delete(id);}
+
  const routes=new Map();
  for(const route of data.roads||[]){
   const key=route.from+"-"+route.to;
