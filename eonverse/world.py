@@ -23,6 +23,7 @@ from .social import personality, update_social
 from .society import update_society
 from .civic import update_civic
 from .inventions import update_inventions
+from .experiments import update_experiments, inherit_knowledge
 
 
 @dataclass
@@ -159,6 +160,7 @@ class World:
             newcomer.age = 0
             if len(self.residents) > 1:
                 newcomer.family_id = self.rng.choice(self.residents[:-1]).family_id
+                inherit_knowledge(self, newcomer)
             self.births += 1
             self.history.append(f"Day {self.tick}: child #{newcomer.id} was born")
         survivors = []
@@ -187,6 +189,7 @@ class World:
         update_shipments(self)
         update_industry(self)
         update_inventions(self)
+        update_experiments(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
         self.chronicle = self.chronicle[-500:]
