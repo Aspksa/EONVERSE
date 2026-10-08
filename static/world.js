@@ -66,12 +66,22 @@ const personMat=new THREE.MeshStandardMaterial({color:0xffc77e});
 const roofMat=new THREE.MeshStandardMaterial({color:0x8d443b});
 const wallMat=new THREE.MeshStandardMaterial({color:0xd4ba8e});
 
-const routeMeshes=new Map(), caravanMeshes=new Map();
+const routeMeshes=new Map(), caravanMeshes=new Map(), structureMeshes=new Map();
 function refreshTransport(data){
  const routes=new Map();
  for(const route of data.roads||[]){
   const key=route.from+"-"+route.to;
   routes.set(key,route);
+  const previous=structureMeshes.get(key);
+  if(previous){scene.remove(previous);structureMeshes.delete(key);}
+  if(route.built && (route.bridges || route.ports)){
+    const sample=route.waypoints[Math.floor(route.waypoints.length/2)];
+    if(sample){
+      const geometry=route.ports?new THREE.CylinderGeometry(.8,1,1.4,8):new THREE.BoxGeometry(2,.45,1);
+      const marker=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:route.ports?0x57cbe7:0xd9b77c}));
+      marker.position.set(sample.x,1.2,sample.z);scene.add(marker);structureMeshes.set(key,marker);
+    }
+  }
   if(routeMeshes.has(key))continue;
   const points=(route.waypoints||[]).map(p=>new THREE.Vector3(p.x,1.15,p.z));
   if(points.length<2)continue;
@@ -79,7 +89,7 @@ function refreshTransport(data){
   const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),material);
   scene.add(line);routeMeshes.set(key,line);
  }
- for(const [key,mesh] of routeMeshes)if(!routes.has(key)){scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();routeMeshes.delete(key);}
+ for(const [key,mesh] of routeMeshes)if(!routes.has(key)){scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();routeMeshes.delete(key);const item=structureMeshes.get(key);if(item){scene.remove(item);structureMeshes.delete(key);}}
  const visible=new Set();
  (data.shipments||[]).forEach((cargo,index)=>{
   const key=[Math.min(cargo.from,cargo.to),Math.max(cargo.from,cargo.to)].join("-");
