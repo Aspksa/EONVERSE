@@ -14,23 +14,26 @@ ALLOWED = {"grain", "timber"}
 _runtime_key = None
 _runtime_model = None
 _runtime_enabled = False
+_runtime_disabled = False
 
 
 def configure(key, model="DeepSeek-V4-Flash"):
-    global _runtime_key, _runtime_model, _runtime_enabled
+    global _runtime_key, _runtime_model, _runtime_enabled, _runtime_disabled
     if not isinstance(key, str) or not 8 <= len(key) <= 4096:
         raise ValueError("Invalid Cloud.ru API key")
     if model != "DeepSeek-V4-Flash":
         raise ValueError("Unsupported model")
-    _runtime_key, _runtime_model, _runtime_enabled = key, model, True
+    _runtime_key, _runtime_model, _runtime_enabled, _runtime_disabled = key, model, True, False
 
 
 def disconnect():
-    global _runtime_key, _runtime_model, _runtime_enabled
-    _runtime_key, _runtime_model, _runtime_enabled = None, None, False
+    global _runtime_key, _runtime_model, _runtime_enabled, _runtime_disabled
+    _runtime_key, _runtime_model, _runtime_enabled, _runtime_disabled = None, None, False, True
 
 
 def credentials():
+    if _runtime_disabled:
+        return None, None
     if _runtime_enabled and _runtime_key:
         return _runtime_key, _runtime_model
     if os.getenv("EONVERSE_AI_ENABLED") == "1":
