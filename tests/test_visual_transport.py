@@ -11,6 +11,7 @@ def test_route_waypoints_and_transport_modes(tmp_path):
     a, b = world.states[:2]
     world.settlements[1]["x"] = world.settlements[0]["x"] + 5
     world.settlements[1]["z"] = world.settlements[0]["z"]
+    world.infrastructure[(a["id"], b["id"])]={"kind":"road","condition":100,"spent":16,"bridges":0,"ports":0}
     route = route_status(world, a, b)
     assert route is not None
     assert route["mode"] in {"road", "bridge", "pass", "sea"}
