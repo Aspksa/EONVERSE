@@ -65,6 +65,53 @@ const personGeo=new THREE.CapsuleGeometry(0.42,1.05,4,8);
 const personMat=new THREE.MeshStandardMaterial({color:0xffc77e});
 const roofMat=new THREE.MeshStandardMaterial({color:0x8d443b});
 const wallMat=new THREE.MeshStandardMaterial({color:0xd4ba8e});
+
+const routeMeshes=new Map(), caravanMeshes=new Map();
+function refreshTransport(data){
+ const routes=new Map();
+ for(const route of data.roads||[]){
+  const key=route.from+"-"+route.to;
+  routes.set(key,route);
+  if(routeMeshes.has(key))continue;
+  const points=(route.waypoints||[]).map(p=>new THREE.Vector3(p.x,1.15,p.z));
+  if(points.length<2)continue;
+  const material=new THREE.LineBasicMaterial({color:route.mode==="sea"?0x61c9f4:route.mode==="bridge"?0xf4ce81:route.mode==="pass"?0xdb9f76:0xb9ad8b});
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),material);
+  scene.add(line);routeMeshes.set(key,line);
+ }
+ for(const [key,mesh] of routeMeshes)if(!routes.has(key)){scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();routeMeshes.delete(key);}
+ const visible=new Set();
+ (data.shipments||[]).forEach((cargo,index)=>{
+  const key=[Math.min(cargo.from,cargo.to),Math.max(cargo.from,cargo.to)].join("-");
+  const route=routes.get(key);
+  if(!route||route.waypoints.length<2)return;
+  const id=key+"-"+cargo.kind+"-"+index;
+  visible.add(id);
+  let group=caravanMeshes.get(id);
+  if(!group){
+   group=new THREE.Group();
+   const ship=route.mode==="sea";
+   const base=new THREE.Mesh(ship?new THREE.BoxGeometry(1.6,.5,.8):new THREE.BoxGeometry(1,.7,.65),new THREE.MeshStandardMaterial({color:ship?0x65cbe3:0xc28d4f}));
+   base.position.y=.55;group.add(base);
+   const load=new THREE.Mesh(new THREE.BoxGeometry(.65,.6,.5),new THREE.MeshStandardMaterial({color:0xe1b96f}));
+   load.position.y=1.05;group.add(load);
+   scene.add(group);caravanMeshes.set(id,group);
+  }
+  const start=route.waypoints[0],end=route.waypoints[route.waypoints.length-1];
+  const reverse=cargo.from!==route.from;
+  const distance=Math.max(1,Number(cargo.remaining_ticks)||10);
+  const total=Math.max(10,Number(route.travel_ticks)||10);
+  const t=Math.max(0,Math.min(1,1-distance/total));
+  const fraction=reverse?1-t:t;
+  const location=fraction*(route.waypoints.length-1);
+  const left=Math.min(route.waypoints.length-2,Math.floor(location)),alpha=location-left;
+  const one=route.waypoints[left],two=route.waypoints[left+1];
+  group.position.set(one.x+(two.x-one.x)*alpha,.9,one.z+(two.z-one.z)*alpha);
+  group.rotation.y=Math.atan2(two.x-one.x,two.z-one.z)+(reverse?Math.PI:0);
+ });
+ for(const [id,mesh] of caravanMeshes)if(!visible.has(id)){scene.remove(mesh);caravanMeshes.delete(id);}
+}
+
 let latest={residents:[]};
 let frozen=false;
 document.getElementById('pause').addEventListener('click',()=>{frozen=!frozen;document.getElementById('pause').textContent=frozen?'Продолжить':'Стоп-кадр';});
@@ -77,6 +124,7 @@ function synchronize(data){
  states.replaceChildren();
  for(const state of data.states||[]){const entry=document.createElement('div');entry.textContent=state.name+' · '+(state.government||'council')+' · казна '+Math.round(state.treasury||0);states.appendChild(entry);}
  buildTerrain(data.terrain);
+ refreshTransport(data);
  for(const [id,el] of Object.entries({population:data.population,tick:data.tick,food:data.resources.food,wood:data.resources.wood})){document.getElementById(id).textContent=el;}
  document.getElementById("history").innerHTML=(data.chronicle||data.history).slice(-10).reverse().map(t=>`<div>• ${t.replaceAll("<","&lt;")}</div>`).join("") || "Первые жители исследуют остров...";
  const active=new Set(data.residents.map(p=>p.id));
