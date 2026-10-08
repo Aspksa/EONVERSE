@@ -205,3 +205,7 @@ Repeated voluntary group practices can become stable customs without preset cere
 ## v0.8.1–v0.8.3 — Technological refinement and research divergence
 
 Successful and unsuccessful mechanical trials may be refined through repeated paid generations, with tracked performance, attempts and material consumption. Trusted researchers form bounded research groups and share expertise. Each state's research archive and resource availability determine its trajectory, allowing different local technology portfolios without fixed historical eras or named inventions. The mechanical model is abstract and deterministic, not a full engineering solver; technical and scientific freedom remains limited to the existing simulation primitives.
+
+## v0.8.4–v0.8.7 — Living planet (proposed)
+
+A bounded ecosystem now populates habitable cells with abstract producers and consumers. Organisms have energy budgets, inherited efficiency and resilience traits with small mutations, and survival and reproduction depend on local resources. Soil conditions evolve slowly with occupancy, while states accrue periodically sampled local demographic histories. Ecosystems are deterministic and saved in JSON. This is a coarse ecological model, not a full food web, genetic simulator, geomorphology engine or physically realistic evolution; environmental interactions are intentionally simple.
