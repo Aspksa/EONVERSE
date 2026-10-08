@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from eonverse.world import World
+from eonverse.resource_catalog import MATERIAL_CATALOG
 from eonverse.persistence import load_world, save_world
 
 ROOT = Path(__file__).resolve().parent
@@ -51,6 +52,11 @@ app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 @app.get("/")
 async def home():
     return FileResponse(ROOT / "static" / "index.html")
+
+
+@app.get("/api/resources/catalog")
+async def resource_catalog():
+    return {"count": len(MATERIAL_CATALOG), "materials": MATERIAL_CATALOG}
 
 
 @app.get("/api/world")
