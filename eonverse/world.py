@@ -28,6 +28,8 @@ from .society import update_society
 from .civic import update_civic
 from .inventions import update_inventions
 from .experiments import update_experiments, inherit_knowledge
+from .culture import update_culture
+from .mechanics import update_mechanics
 from .science import update_science
 from .medicine import seed_herbs, update_medicine, teach_medicine
 from .public_health import update_public_health
@@ -218,6 +220,8 @@ class World:
         update_individuality(self)
         update_cooperation(self)
         update_institutions(self)
+        update_culture(self)
+        update_mechanics(self)
         update_planning(self)
         update_technology_generations(self)
         additions = self.history[len(old_history):]
