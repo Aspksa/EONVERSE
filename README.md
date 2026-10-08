@@ -125,3 +125,7 @@ Capital-to-capital links are now sampled against the terrain grid and classified
 ## v0.5.5 — Terrain-aware route search (proposed)
 
 Trade corridors now use weighted grid search instead of straight interpolated lines. Land paths avoid water, penalize highlands, and follow contiguous tiles; route waypoints drive the existing animated cargo markers. A mixed sea fallback can navigate water when no land path exists. Bridge/pass/sea classifications are derived from the resulting route. This is a first terrain-based pathfinding pass, not yet full physical bridge/port construction, actual boat navigation, editable roads painted onto terrain, or multi-modal path planning.
+
+## v0.5.6 — Built transport infrastructure (proposed)
+
+Routes require separately funded built assets. States share construction costs for roads, passes, bridge links and port links; condition depreciates in 50-tick cycles, with paid maintenance if affordable. Transport capacity and cost depend on condition, and shipping requires an operational link. JSON saves persist asset condition and investment totals. Basic bridge/port markers appear in the Three.js view. This is abstract per-corridor construction; tile-by-tile roads, harbor berths and navigable shipping remain future work.
