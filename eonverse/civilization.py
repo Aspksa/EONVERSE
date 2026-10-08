@@ -43,12 +43,7 @@ def update_civilizations(world):
             else "village" if city["houses"] >= 3 else "hamlet"
         )
         city["territory_radius"] = min(12, 6 + city["houses"] // 3)
-    # Approximate tax base for future politics: one unit per five local residents.
-    if world.tick % 25 == 0:
-        for state in world.states:
-            capital = next(c for c in world.settlements
-                           if c["id"] == state["capital_id"])
-            state["treasury"] += capital["population"] // 5
+    # Fiscal transfers are performed exclusively by update_economy.
 
 
 def territorial_owner(world, x, z):
