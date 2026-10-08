@@ -1,5 +1,6 @@
 """Deterministic trade infrastructure, route risk and embargoes."""
 from math import hypot
+from .path_network import find_route, classify_path, biome_at
 
 def route_status(world, a, b):
     """Physical proxy for infrastructure between two state capitals."""
@@ -14,19 +15,15 @@ def route_status(world, a, b):
     level = world.roads.get(key, 0)
     cities = {c["id"]: c for c in world.settlements}
     first, second = cities.get(a["capital_id"]), cities.get(b["capital_id"])
-    # Sample the straight corridor for visualization; actual grid pathfinding follows later.
-    samples = []
-    half = world.terrain.size // 2 if hasattr(world.terrain, "size") else 32
-    for i in range(17):
-        t = i / 16
-        x = first["x"] * (1 - t) + second["x"] * t
-        z = first["z"] * (1 - t) + second["z"] * t
-        tx, tz = round(x) + half, round(z) + half
-        tile = world.terrain.tiles[tz][tx] if 0 <= tz < len(world.terrain.tiles) and 0 <= tx < len(world.terrain.tiles[tz]) else {}
-        samples.append({"x": round(x, 2), "z": round(z, 2), "biome": tile.get("biome", "unknown")})
-    water = sum(p["biome"] == "water" for p in samples[1:-1])
-    mountains = sum(p["biome"] == "highland" for p in samples[1:-1])
-    kind = "sea" if water >= 8 else "bridge" if water else "pass" if mountains >= 5 else "road"
+    path = find_route(world.terrain, (first["x"], first["z"]), (second["x"], second["z"]), "land")
+    if not path:
+        path = find_route(world.terrain, (first["x"], first["z"]), (second["x"], second["z"]), "sea")
+    if not path:
+        return None
+    samples = [{"x": x, "z": z, "biome": biome_at(world.terrain, x, z)}
+               for x, z in path]
+    kind = classify_path(world.terrain, path)
+    distance = len(path) - 1
     return {
         "mode": kind, "waypoints": samples,
         "from": key[0], "to": key[1], "distance": round(distance, 2),

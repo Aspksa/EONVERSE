@@ -121,3 +121,7 @@ States can jointly fund up to three road improvements. Better roads increase rou
 ## v0.5.4 — Visual transport network (proposed)
 
 Capital-to-capital links are now sampled against the terrain grid and classified as land roads, bridges, mountain passes or sea corridors. Modes affect costs and travel times, with pass capacity constraints and extra investment costs. Route snapshots include waypoints. The Three.js viewer draws colored links and cargo vehicles moving along them as shipment ticks advance. This initial implementation uses straight sampled corridors, not full navigable roads, construction of bridge geometry over rivers, working ships on real sea lanes, or vehicle-grade animation and collision detection. These richer systems require pathfinding, ports, and explicit terrain edits in a later release.
+
+## v0.5.5 — Terrain-aware route search (proposed)
+
+Trade corridors now use weighted grid search instead of straight interpolated lines. Land paths avoid water, penalize highlands, and follow contiguous tiles; route waypoints drive the existing animated cargo markers. A mixed sea fallback can navigate water when no land path exists. Bridge/pass/sea classifications are derived from the resulting route. This is a first terrain-based pathfinding pass, not yet full physical bridge/port construction, actual boat navigation, editable roads painted onto terrain, or multi-modal path planning.
