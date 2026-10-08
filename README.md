@@ -149,3 +149,7 @@ Residents independently select from six jobs using their personalities, skills a
 ## v0.6.3 — Civic intelligence and inventions (proposed)
 
 Adult inhabitants propose bounded civic policies, organize into preference factions, discuss via established trust links and cast local ballots. Their government records the proposal counts, faction memberships, ballot totals and a locally chosen civic leader. Adopted laws determine actual tax rates and may discount extraction research. Inventors with relevant skills and treasury funding can prototype tools, mechanical devices and defensive equipment by consuming real state materials; known blueprints and productivity indicators persist in state save data. This remains a deterministic simulation using a finite policy/blueprint catalog; no free-form language generation, actual crafting physics, detailed weapons engineering or legal enforcement.
+
+## v0.6.4 — Procedural experimental evolution
+
+Researchers combine pairs of abstract principles to construct prototypes. Every experiment consumes resource stock and funds, records failed and successful trials, and awards a small, bounded productivity benefit for validated results. Family members inherit a fraction of accumulated skills. Outcomes are reproducible and stored in state save data. This is an abstract innovation model rather than real-world engineering or unconstrained autonomous invention.
