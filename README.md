@@ -181,3 +181,7 @@ Adult inhabitants compose up to three financed actions based on observed shortfa
 ## v0.7.1 — Learning from failed plans (proposed)
 
 Residents remember costs of unsuccessful strategies and their observed gains. Failed approaches become less attractive in subsequent plans; some experience transfers as a weaker penalty to other objectives. A resident can still explore previously unsuccessful actions when evidence changes. Learning is bounded to the simulation's existing generic controls and is not unconstrained self-reprogramming.
+
+## v0.7.2 — Social exchange of hypotheses (proposed)
+
+Nearby residents with reciprocal trust can exchange evidence-backed ideas. Shared claims retain their originating speaker, estimated effect, confidence, number of trials and observation time. Contradictory personal experiences generate unresolved joint questions rather than forced consensus; discussion history and beliefs survive world saves. This is a bounded symbolic communication system, not free-form spoken language or unrestricted peer-led science.
