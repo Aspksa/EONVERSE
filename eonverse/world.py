@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass, field
+from .terrain import Terrain
 
 
 @dataclass
@@ -17,6 +18,7 @@ class Resident:
     wood: float = 0.0
     role: str = "gatherer"
     home: int | None = None
+    path: list[tuple[int, int]] = field(default_factory=list)
 
 
 @dataclass
@@ -32,15 +34,15 @@ class World:
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
+        self.terrain = Terrain(self.seed)
         if not self.residents:
             for _ in range(12):
                 self.spawn()
 
     def spawn(self):
-        resident = Resident(
-            id=self.next_id, x=self.rng.uniform(-17, 17),
-            z=self.rng.uniform(-17, 17), age=self.rng.uniform(18, 38)
-        )
+        positions = [(x, z) for z in range(-18, 19) for x in range(-18, 19) if self.terrain.walkable(x, z)]
+        x, z = self.rng.choice(positions)
+        resident = Resident(id=self.next_id, x=x, z=z, age=self.rng.uniform(18, 38))
         self.next_id += 1
         self.residents.append(resident)
         return resident
@@ -51,8 +53,17 @@ class World:
             person.age += 0.002
             person.food = max(0, person.food - 0.38)
             person.energy = max(0, person.energy - 0.13)
-            person.x = max(-27, min(27, person.x + self.rng.uniform(-0.55, 0.55)))
-            person.z = max(-27, min(27, person.z + self.rng.uniform(-0.55, 0.55)))
+            if not person.path:
+                for _ in range(8):
+                    goal = (self.rng.randint(-25, 25), self.rng.randint(-25, 25))
+                    if self.terrain.walkable(*goal):
+                        person.path = self.terrain.route((person.x, person.z), goal)[1:]
+                        if person.path:
+                            break
+            if person.path:
+                nx, nz = person.path.pop(0)
+                if self.terrain.walkable(nx, nz):
+                    person.x, person.z = float(nx), float(nz)
             if person.food < 45 and self.food_supply > 0:
                 taken = min(8, self.food_supply)
                 self.food_supply -= taken
@@ -85,6 +96,7 @@ class World:
     def snapshot(self):
         return {
             "seed": self.seed, "tick": self.tick,
+            "terrain": {"size": 65, "tiles": self.terrain.tiles},
             "population": len(self.residents),
             "resources": {"food": round(self.food_supply, 1), "wood": round(self.wood_supply, 1)},
             "residents": [vars(r).copy() for r in self.residents],
