@@ -23,6 +23,9 @@ def test_shipments_are_delayed_and_persist(tmp_path):
     b["resource_inventory"] = {"iron": 20}
     world.shipments = [{"from": b["id"], "to": a["id"], "kind": "iron",
                         "units": 3, "remaining_ticks": 20}]
+    # This shipment was dispatched along a funded and operational route.
+    key = (min(a["id"], b["id"]), max(a["id"], b["id"]))
+    world.infrastructure[key] = {"kind": "road", "condition": 100, "spent": 16}
     world.tick = 260
     update_shipments(world)
     assert a["resource_inventory"]["iron"] == 0

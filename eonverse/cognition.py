@@ -74,6 +74,13 @@ def act(world, person):
         # Harvest only when within reach of a deposit.
         quantity=world.harvest_natural(kind, 2, person.x, person.z, radius=1.5)
         if quantity>0:
+            # First-hand observations reinforce successful everyday actions.
+            habits = person.memory.setdefault("habits", {})
+            key = "gather_" + kind
+            habits[key] = min(10, habits.get(key, 0) + .1)
+            beliefs = person.memory.setdefault("beliefs", {})
+            evidence_key = person.goal + (":food" if kind == "grain" else ":energy")
+            beliefs[evidence_key] = round(min(.95, beliefs.get(evidence_key, .5) + .005), 3)
             if kind=="grain":
                 world.food_supply+=quantity
             else:
@@ -85,6 +92,10 @@ def act(world, person):
                 world.food_supply-=meal
                 person.food+=meal
         else:
+            # Lack of yield teaches the agent that the attempted action failed.
+            evidence_key = person.goal + (":food" if kind == "grain" else ":energy")
+            beliefs = person.memory.setdefault("beliefs", {})
+            beliefs[evidence_key] = round(max(.05, beliefs.get(evidence_key, .5) - .002), 3)
             person.role="travelling"
     elif person.goal == "migrate":
         person.role="travelling"

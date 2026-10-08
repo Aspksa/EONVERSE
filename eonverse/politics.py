@@ -13,8 +13,14 @@ def update_politics(world):
             state["ruler_id"] = None
             state["law"] = "balanced"
             state["elections_at"] = world.tick + 100
+        if state.get("dissolved"):
+            continue
+        from .civilization import territorial_owner
+        candidates = [r for r in world.residents if r.age >= 16
+                      and territorial_owner(world, r.x, r.z) == state["id"]]
         incumbent = residents.get(state.get("ruler_id"))
-        candidates = [r for r in world.residents if r.age >= 16]
+        if incumbent not in candidates:
+            incumbent = None
         if not candidates:
             state["ruler_id"] = None
             continue

@@ -1,5 +1,6 @@
 """Rule-based state economy: taxation, resource stockpiles and trade corridors."""
 from math import hypot
+from .civilization import territorial_owner
 
 def update_economy(world):
     if world.tick % 20:
@@ -10,12 +11,23 @@ def update_economy(world):
         city = cities.get(state["capital_id"])
         if city is None:
             continue
-        population = city["population"]
+        citizens = [p for p in world.residents
+                    if territorial_owner(world, p.x, p.z) == state["id"]]
         tax_rate = state.get("civic_effects", {}).get("tax_rate", .04 if state.get("law") == "conservation" else .08)
-        collected = round(population * tax_rate, 2)
+        collected = 0.0
+        for citizen in citizens:
+            tax = round(min(max(0, citizen.coins), tax_rate), 2)
+            citizen.coins = round(citizen.coins - tax, 2)
+            collected += tax
+        collected = round(collected, 2)
         state["treasury"] = round(state["treasury"] + collected, 2)
-        state["food_stock"] = round(state.get("food_stock", 0) + min(6, population * .4), 2)
-        state["wood_stock"] = round(state.get("wood_stock", 0) + min(4, city["houses"] * .3), 2)
+        # Transfer real common reserves rather than creating new commodities.
+        food = min(max(0, world.food_supply), max(0, 6 - state.get("food_stock", 0)))
+        wood = min(max(0, world.wood_supply), max(0, 4 - state.get("wood_stock", 0)))
+        world.food_supply = round(world.food_supply - food, 4)
+        world.wood_supply = round(world.wood_supply - wood, 4)
+        state["food_stock"] = round(state.get("food_stock", 0) + food, 4)
+        state["wood_stock"] = round(state.get("wood_stock", 0) + wood, 4)
         state["tax_revenue"] = round(state.get("tax_revenue", 0) + collected, 2)
     for i, seller in enumerate(states):
         a = cities.get(seller["capital_id"])

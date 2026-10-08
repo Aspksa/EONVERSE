@@ -20,7 +20,8 @@ def update_shipments(world):
     for shipment in world.shipments:
         sender, receiver = active.get(shipment["from"]), active.get(shipment["to"])
         route = route_status(world, sender, receiver) if sender and receiver else None
-        if route and route["blocked"]:
+        # No path or destroyed infrastructure must not allow teleport delivery.
+        if route is None or route["blocked"] or not route["built"]:
             pending.append(shipment)
             continue
         shipment["remaining_ticks"] -= 10
