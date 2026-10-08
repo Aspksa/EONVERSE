@@ -14,6 +14,7 @@ from .revolutions import update_revolutions
 from .resources import create_deposits, update_resources, resource_disputes
 from .resource_market import update_resource_trade
 from .industry import update_industry
+from .logistics import update_shipments
 
 
 @dataclass
@@ -54,6 +55,8 @@ class World:
     wars: dict[tuple[int, int], dict] = field(default_factory=dict)
     deposits: list[dict] = field(default_factory=list)
     resource_trades: int = 0
+    shipments: list[dict] = field(default_factory=list)
+    delivered_shipments: int = 0
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -72,13 +75,15 @@ class World:
         self.residents.append(resident)
         return resident
 
-    def harvest_natural(self, kind: str, wanted: float) -> float:
+    def harvest_natural(self, kind: str, wanted: float, x=None, z=None, radius: float = 9) -> float:
         """Take natural supply only from actual finite/regrowing deposits."""
         if wanted <= 0:
             return 0.0
         remaining = wanted
         for deposit in self.deposits:
             if deposit["kind"] != kind or remaining <= 0:
+                continue
+            if x is not None and z is not None and math.hypot(deposit["x"] - x, deposit["z"] - z) > radius:
                 continue
             amount = min(remaining, max(0, deposit["remaining"]))
             deposit["remaining"] -= amount
@@ -111,11 +116,11 @@ class World:
                 person.food = min(100, person.food + taken)
                 person.role = "forager"
             elif self.rng.random() < 0.12:
-                harvest = self.harvest_natural("grain", self.rng.uniform(1, 4))
+                harvest = self.harvest_natural("grain", self.rng.uniform(1, 4), person.x, person.z)
                 self.food_supply += harvest
                 person.role = "farmer" if harvest else "explorer"
             elif self.rng.random() < 0.12:
-                harvest = self.harvest_natural("timber", self.rng.uniform(1, 3))
+                harvest = self.harvest_natural("timber", self.rng.uniform(1, 3), person.x, person.z)
                 self.wood_supply += harvest
                 person.role = "woodcutter" if harvest else "explorer"
             else:
@@ -124,7 +129,7 @@ class World:
                 person.energy = min(100, person.energy + 1.6)
                 person.role = "resting"
         if self.tick % 12 == 0:
-            self.food_supply += self.harvest_natural("grain", len(self.farms) * 2.5)
+            self.food_supply += sum(self.harvest_natural("grain", 2.5, farm["x"], farm["z"]) for farm in self.farms)
         if self.tick % 30 == 0 and self.wood_supply >= 15 and len(self.farms) < 18:
             self.wood_supply -= 15
             farmer = self.rng.choice(self.residents)
@@ -169,6 +174,7 @@ class World:
         update_revolutions(self)
         update_resources(self)
         update_resource_trade(self)
+        update_shipments(self)
         update_industry(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
@@ -193,6 +199,8 @@ class World:
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
             "deposits": [d.copy() for d in self.deposits],
             "resource_trades": self.resource_trades,
+            "shipments": [s.copy() for s in self.shipments],
+            "delivered_shipments": self.delivered_shipments,
             "resource_disputes": resource_disputes(self),
             "history": self.history.copy(),
             "chronicle": self.chronicle.copy(),
