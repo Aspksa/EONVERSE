@@ -31,9 +31,9 @@ def route_status(world, a, b):
         "mode": kind, "waypoints": samples,
         "from": key[0], "to": key[1], "distance": round(distance, 2),
         "road_level": level, "blocked": blocked,
-        "capacity": 3 + 3 * level,
-        "travel_ticks": max(10, ((int(distance // (5 + 3 * level)) + 1) * 10)),
-        "transport_rate": max(0.01, round(0.05 - level * 0.01, 2)),
+        "capacity": (2 if kind == "pass" else 3) + 3 * level,
+        "travel_ticks": max(10, ((int(distance // (5 + 3 * level)) + 1) * 10) + (20 if kind == "pass" else 10 if kind == "bridge" else 0)),
+        "transport_rate": max(0.01, round(0.05 - level * 0.01 + (0.02 if kind in ("bridge", "pass") else 0.01 if kind == "sea" else 0), 2)),
         "danger": 2 if war.get("status") == "active" else 1 if relation.get("trust", 50) < 30 else 0,
     }
 
@@ -47,7 +47,7 @@ def update_roads(world):
             route = route_status(world, a, b)
             if not route or route["blocked"] or route["road_level"] >= 3:
                 continue
-            cost = 12 * (route["road_level"] + 1)
+            cost = (12 + (15 if route["mode"] == "bridge" else 20 if route["mode"] == "pass" else 12 if route["mode"] == "sea" else 0)) * (route["road_level"] + 1)
             # Joint investments require both participating treasuries.
             if a.get("treasury", 0) >= cost and b.get("treasury", 0) >= cost:
                 a["treasury"] = round(a["treasury"] - cost, 2)
