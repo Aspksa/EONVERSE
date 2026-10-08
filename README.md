@@ -177,3 +177,7 @@ Residents now aggregate evidence across repeated experiments per intervention an
 ## v0.7.0 — Long-horizon resident planning (proposed)
 
 Adult inhabitants compose up to three financed actions based on observed shortfalls and uncertain causal experience. Plans persist over multiple simulation ticks, enlist trusted supporters, compare observed outcomes and revise when failures accumulate. Plans and outcomes persist in state history and individual memory. This is bounded, evidence-driven planning over generic world controls — not unrestricted agent autonomy or a prescribed path to particular institutions.
+
+## v0.7.1 — Learning from failed plans (proposed)
+
+Residents remember costs of unsuccessful strategies and their observed gains. Failed approaches become less attractive in subsequent plans; some experience transfers as a weaker penalty to other objectives. A resident can still explore previously unsuccessful actions when evidence changes. Learning is bounded to the simulation's existing generic controls and is not unconstrained self-reprogramming.
