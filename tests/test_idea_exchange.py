@@ -39,7 +39,8 @@ def test_conflicting_experience_creates_question():
     a.relationships[str(b.id)]=b.relationships[str(a.id)]=90
     a.memory["last_causal_estimate"]=-4
     b.memory["last_causal_estimate"]=-4
-    state["causal_models"]={"research:food":{"trials":3,"mean_effect":2,"confidence":.8}}
+    a.memory["personal_causal_models"]={"research:food":{"trials":3,"mean_effect":2,"confidence":.8}}
+    b.memory["personal_causal_models"]={"research:food":{"trials":3,"mean_effect":2,"confidence":.8}}
     state["knowledge_discussions"]=[]
     state["collaborative_questions"]=[]
     world.tick=280
