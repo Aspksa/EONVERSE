@@ -38,6 +38,7 @@ class World:
     food_supply: float = 120.0
     wood_supply: float = 85.0
     history: list[str] = field(default_factory=list)
+    chronicle: list[str] = field(default_factory=list)
     next_id: int = 1
     farms: list[dict] = field(default_factory=list)
     births: int = 0
@@ -65,6 +66,7 @@ class World:
         return resident
 
     def step(self):
+        old_history = list(self.history)
         self.tick += 1
         for person in list(self.residents):
             person.age += 0.02
@@ -145,6 +147,9 @@ class World:
         update_diplomacy(self)
         update_warfare(self)
         update_revolutions(self)
+        additions = self.history[len(old_history):]
+        self.chronicle.extend(additions)
+        self.chronicle = self.chronicle[-500:]
         self.history = self.history[-30:]
 
     def snapshot(self):
@@ -164,4 +169,5 @@ class World:
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
             "history": self.history.copy(),
+            "chronicle": self.chronicle.copy(),
         }

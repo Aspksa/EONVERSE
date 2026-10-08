@@ -30,6 +30,7 @@ def load_world(path):
     world.food_supply = float(data["resources"]["food"])
     world.wood_supply = float(data["resources"]["wood"])
     world.history = data["history"]
+    world.chronicle = data.get("chronicle", data["history"].copy())
     world.next_id = int(data["next_id"])
     stats = data.get("demographics", {})
     world.births = int(stats.get("births", 0))

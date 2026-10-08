@@ -66,11 +66,19 @@ const personMat=new THREE.MeshStandardMaterial({color:0xffc77e});
 const roofMat=new THREE.MeshStandardMaterial({color:0x8d443b});
 const wallMat=new THREE.MeshStandardMaterial({color:0xd4ba8e});
 let latest={residents:[]};
+let frozen=false;
+document.getElementById('pause').addEventListener('click',()=>{frozen=!frozen;document.getElementById('pause').textContent=frozen?'Продолжить':'Стоп-кадр';});
+document.getElementById('observe').addEventListener('click',()=>{controls.target.set(0,0,0);camera.position.set(56,55,64);});
+document.getElementById('focus').addEventListener('click',()=>{const city=latest.settlements?.[0];if(city){controls.target.set(city.x,0,city.z);camera.position.set(city.x+18,25,city.z+20);}});
 function synchronize(data){
+ if(frozen)return;
  latest=data;
+ const states=document.getElementById('states');
+ states.replaceChildren();
+ for(const state of data.states||[]){const entry=document.createElement('div');entry.textContent=state.name+' · '+(state.government||'council')+' · казна '+Math.round(state.treasury||0);states.appendChild(entry);}
  buildTerrain(data.terrain);
  for(const [id,el] of Object.entries({population:data.population,tick:data.tick,food:data.resources.food,wood:data.resources.wood})){document.getElementById(id).textContent=el;}
- document.getElementById("history").innerHTML=data.history.slice(-6).reverse().map(t=>`<div>• ${t.replaceAll("<","&lt;")}</div>`).join("") || "Первые жители исследуют остров...";
+ document.getElementById("history").innerHTML=(data.chronicle||data.history).slice(-10).reverse().map(t=>`<div>• ${t.replaceAll("<","&lt;")}</div>`).join("") || "Первые жители исследуют остров...";
  const active=new Set(data.residents.map(p=>p.id));
  for(const [id,mesh] of people)if(!active.has(id)){scene.remove(mesh);people.delete(id);}
  for(const p of data.residents){
