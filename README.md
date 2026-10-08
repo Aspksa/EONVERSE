@@ -185,3 +185,7 @@ Residents remember costs of unsuccessful strategies and their observed gains. Fa
 ## v0.7.2 — Social exchange of hypotheses (proposed)
 
 Nearby residents with reciprocal trust can exchange evidence-backed ideas. Shared claims retain their originating speaker, estimated effect, confidence, number of trials and observation time. Contradictory personal experiences generate unresolved joint questions rather than forced consensus; discussion history and beliefs survive world saves. This is a bounded symbolic communication system, not free-form spoken language or unrestricted peer-led science.
+
+## v0.7.3 — Evolving individuality
+
+Residents accumulate bounded personal beliefs about interventions, preferences over needs, and habits based on repeated experience. Trusted shared evidence can weakly update a belief without forcing consensus. Personal priorities influence which problem each planner addresses, allowing differing decisions in the same world conditions. Memory remains deterministic across save/load. These are simplified adaptive tendencies, not conscious persons or unlimited self-directed cognition.
