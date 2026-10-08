@@ -122,3 +122,39 @@ def test_civilization_update_does_not_mint_taxes():
     before = state["treasury"]
     update_civilizations(world)
     assert state["treasury"] == before
+
+
+def test_unhealthy_population_cannot_trigger_birth():
+    world = World(42)
+    for person in world.residents:
+        person.age = 30
+        person.health = 20
+        person.food = 20
+    world.tick = 79
+    before = len(world.residents)
+    world.step()
+    assert len(world.residents) <= before
+    assert world.births == 0
+
+
+def test_trade_does_not_destroy_excess_food():
+    world = World(42)
+    world.residents = world.residents[:2]
+    buyer, seller = world.residents
+    buyer.food = 99
+    buyer.coins = 10
+    seller.food = 50
+    world.tick = 14
+    world.step()
+    assert world.trades == 0
+
+
+def test_cargo_waits_for_missing_route():
+    from eonverse.logistics import update_shipments
+    world = World(42)
+    world.tick = 10
+    world.shipments = [{"from": 1, "to": 2, "kind": "iron",
+                        "units": 3, "remaining_ticks": 10}]
+    update_shipments(world)
+    assert len(world.shipments) == 1
+    assert world.shipments[0]["remaining_ticks"] == 10
