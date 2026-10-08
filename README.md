@@ -93,3 +93,9 @@ Current limits: no 3D mine models, production chains, physical trade, treaties e
 Deposits now have extraction difficulty (1–5), quality (1–5), and discovery records. States must pay to survey mineral or natural resource locations, invest to develop extraction, and pay continuing operational costs. Difficult deposits extract less per cycle. State resource trading transfers finite stock, with prices increasing under scarcity, rather than generating stock out of nowhere. The state of exploration and resource trading survives JSON saves.
 
 Limitations: geology remains abstract, quality is stored for future downstream processing, state prospecting is automatic, no map fog-of-war or player-controlled survey expedition yet; no deep supply chains, transport costs or real resource auctions. The pre-existing generic economy remains a separate prototype.
+
+## v0.4.10 — Expanded resource taxonomy (proposed)
+
+The material catalog now distinguishes raw natural deposits from manufactured products. Categories include metals, rare earths, industrial minerals, gemstones, fossil and nuclear fuels, forest products, foods, water/ecology, animal materials, industrial gases, alloys, chemicals, construction, electronics and energy carriers. Browse all IDs and metadata using `GET /api/resources/catalog`.
+
+World generation chooses diverse finite or renewable natural deposits. Manufactured products are catalog entries **only**, not naturally occurring mines: production recipes and factories require a future release. The identifiers are a gameplay abstraction rather than a complete or scientifically exhaustive database of every known material. Existing legacy core resource IDs remain available.
