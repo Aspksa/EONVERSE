@@ -19,6 +19,8 @@ class Resident:
     role: str = "gatherer"
     home: int | None = None
     path: list[tuple[int, int]] = field(default_factory=list)
+    family_id: int = 0
+    coins: float = 5.0
 
 
 @dataclass
@@ -31,6 +33,10 @@ class World:
     wood_supply: float = 85.0
     history: list[str] = field(default_factory=list)
     next_id: int = 1
+    farms: list[dict] = field(default_factory=list)
+    births: int = 0
+    deaths: int = 0
+    trades: int = 0
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -42,7 +48,7 @@ class World:
     def spawn(self):
         positions = [(x, z) for z in range(-18, 19) for x in range(-18, 19) if self.terrain.walkable(x, z)]
         x, z = self.rng.choice(positions)
-        resident = Resident(id=self.next_id, x=x, z=z, age=self.rng.uniform(18, 38))
+        resident = Resident(id=self.next_id, x=x, z=z, age=self.rng.uniform(18, 38), family_id=(self.next_id - 1) // 3 + 1)
         self.next_id += 1
         self.residents.append(resident)
         return resident
@@ -50,8 +56,10 @@ class World:
     def step(self):
         self.tick += 1
         for person in list(self.residents):
-            person.age += 0.002
+            person.age += 0.02
             person.food = max(0, person.food - 0.38)
+            if self.tick % 10 == 0:
+                person.coins += .25
             person.energy = max(0, person.energy - 0.13)
             if not person.path:
                 for _ in range(8):
@@ -82,6 +90,21 @@ class World:
             if person.energy < 40:
                 person.energy = min(100, person.energy + 1.6)
                 person.role = "resting"
+        if self.tick % 12 == 0:
+            self.food_supply += len(self.farms) * 2.5
+        if self.tick % 30 == 0 and self.wood_supply >= 15 and len(self.farms) < 18:
+            self.wood_supply -= 15
+            farmer = self.rng.choice(self.residents)
+            self.farms.append({"id": len(self.farms) + 1, "x": farmer.x, "z": farmer.z})
+            self.history.append(f"Day {self.tick}: a new farm was planted")
+        if self.tick % 15 == 0 and len(self.residents) > 1:
+            buyer, seller = self.rng.sample(self.residents, 2)
+            if buyer.coins >= 1 and seller.food >= 6:
+                buyer.coins -= 1
+                seller.coins += 1
+                buyer.food = min(100, buyer.food + 5)
+                seller.food -= 5
+                self.trades += 1
         if self.tick % 25 == 0 and self.wood_supply >= 20:
             self.wood_supply -= 20
             location = self.residents[self.rng.randrange(len(self.residents))]
@@ -90,7 +113,21 @@ class World:
         if self.tick % 80 == 0 and self.food_supply >= 30 and len(self.residents) < 120:
             self.food_supply -= 30
             newcomer = self.spawn()
-            self.history.append(f"Day {self.tick}: resident #{newcomer.id} joined the settlement")
+            newcomer.age = 0
+            if len(self.residents) > 1:
+                newcomer.family_id = self.rng.choice(self.residents[:-1]).family_id
+            self.births += 1
+            self.history.append(f"Day {self.tick}: child #{newcomer.id} was born")
+        survivors = []
+        for person in self.residents:
+            if person.age >= 90 or (person.food <= 0 and self.tick % 20 == 0):
+                self.deaths += 1
+                self.history.append(f"Day {self.tick}: resident #{person.id} passed away")
+            else:
+                survivors.append(person)
+        self.residents = survivors
+        if not self.residents:
+            self.spawn()
         self.history = self.history[-30:]
 
     def snapshot(self):
@@ -101,5 +138,8 @@ class World:
             "resources": {"food": round(self.food_supply, 1), "wood": round(self.wood_supply, 1)},
             "residents": [vars(r).copy() for r in self.residents],
             "buildings": [b.copy() for b in self.buildings],
+            "farms": [f.copy() for f in self.farms],
+            "demographics": {"births": self.births, "deaths": self.deaths, "families": len({p.family_id for p in self.residents})},
+            "trades": self.trades,
             "history": self.history.copy(),
         }
