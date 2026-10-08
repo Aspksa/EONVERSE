@@ -45,7 +45,7 @@ def apply_probe(world,state,people,control):
                       key=lambda p:p.id)
         pledges=[]
         for donor in donors:
-            contribution=round(min(deficit,donor.coins-2,2),2)
+            contribution=round(min(deficit,donor.coins-2,4),2)
             if contribution>0:
                 pledges.append((donor,contribution))
                 deficit=round(deficit-contribution,2)
