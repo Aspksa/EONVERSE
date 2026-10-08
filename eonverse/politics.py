@@ -41,7 +41,7 @@ def update_politics(world):
                     f"Day {world.tick}: {state['name']} appointed ruler #{winner.id}"
                 )
         # Policy selection influences future diplomacy and tax reforms.
-        if world.tick % 100 == 0:
+        if world.tick % 100 == 0 and not state.get("law_enacted_at"):
             state["law"] = ("conservation" if world.food_supply < 90
                             else "development" if world.wood_supply > 90
                             else "balanced")
