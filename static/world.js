@@ -60,7 +60,7 @@ function buildTerrain(terrain){
    terrainGroup.add(mesh);
  }
 }
-const people=new Map(), houses=new Map(), farms=new Map();
+const people=new Map(), houses=new Map(), farms=new Map(), cities=new Map();
 const personGeo=new THREE.CapsuleGeometry(0.42,1.05,4,8);
 const personMat=new THREE.MeshStandardMaterial({color:0xffc77e});
 const roofMat=new THREE.MeshStandardMaterial({color:0x8d443b});
@@ -76,6 +76,14 @@ function synchronize(data){
  for(const p of data.residents){
   if(!people.has(p.id)){const mesh=new THREE.Mesh(personGeo,personMat);mesh.castShadow=true;scene.add(mesh);people.set(p.id,mesh);}
   const mesh=people.get(p.id);mesh.userData.target=new THREE.Vector3(p.x,1.65,p.z);
+ }
+ for(const city of data.settlements||[])if(!cities.has(city.id)){
+  const tower=new THREE.Group();
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.6,4,8),new THREE.MeshStandardMaterial({color:0x7993b8}));
+  base.position.y=2.4;base.castShadow=true;tower.add(base);
+  const top=new THREE.Mesh(new THREE.ConeGeometry(1.7,2.5,8),new THREE.MeshStandardMaterial({color:0x594f94}));
+  top.position.y=5.7;tower.add(top);
+  tower.position.set(city.x,0,city.z);scene.add(tower);cities.set(city.id,tower);
  }
  for(const farm of data.farms||[])if(!farms.has(farm.id)){
   const crop=new THREE.Mesh(new THREE.BoxGeometry(2.2,.28,2.2),new THREE.MeshStandardMaterial({color:0xd2a04f}));
