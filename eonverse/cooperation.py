@@ -43,6 +43,8 @@ def update_cooperation(world):
         if former and former["goal"]==group["goal"]:
             group["created_at"]=former["created_at"]
             group["last_mean_condition"]=former["last_mean_condition"]
+            for field in ("agreement_history","stability","resource_pool","last_condition","status","last_relation"):
+                if field in former: group[field]=former[field]
         for member_id in group["members"]:
             citizen=next(p for p in people if p.id==member_id)
             citizen.memory["association_id"]=group["id"]
