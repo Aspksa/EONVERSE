@@ -213,3 +213,7 @@ A bounded ecosystem now populates habitable cells with abstract producers and co
 ## v0.8.8 — Ecological feedback
 
 Locally observed organisms and soil now influence regeneration of nearby vegetal deposits. Residents record nearby renewable stock scarcity and gradually adjust attention to food without being instructed to invent a particular remedy. The old bounded ecological abstraction remains: these are approximate habitat effects, not complete climate, hydrology or trophic webs. Save/replay tests cover ecological coupling.
+
+## v0.8.9–v0.9.1 — Dynamic environment and adaptation
+
+Seeded regional moisture and temperature vary slowly over simulation time. Environmental stress modifies local soil and organism energy; soil already influences renewable-resource regeneration. Residents remember environmental observations and adjust need priorities in response to change, retaining freedom to select actions from the current bounded planner. These are deliberately abstract seasonal dynamics, not realistic weather forecasting, full hydrology or unrestricted planning.
