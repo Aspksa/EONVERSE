@@ -221,3 +221,7 @@ Seeded regional moisture and temperature vary slowly over simulation time. Envir
 ## v0.9.2–v0.9.5 — Migration and adaptive settlements
 
 Adult residents can compare locally observed renewable resources and climate against other reachable settlements and decide to migrate when expected benefits exceed travel costs and their personal caution threshold. Movement uses the world pathfinding system. Trusted residents at shared settlements transfer demonstrated knowledge; settlements keep bounded population/environment histories and recompute influence from occupancy. These mechanics enable distinct local paths of development without prescribed migrations or fixed civilization milestones. Migration remains an abstract goal selection rather than comprehensive demographic or political modeling.
+
+## v0.9.6–v0.9.9 — Migration encounters and settlement origins
+
+When migrants encounter nearby residents, social trust controls limited exchanges of skills and beliefs; low trust records disagreement without scripted violence or assimilation. Where a cluster of two or more adults and dwellings emerges beyond existing settlements, residents can found a new town, superseding automatic house-only founding when the criteria are met. Historical settlement founding still has a legacy fallback. These are bounded social models, not natural-language culture or fully emergent institution design.
