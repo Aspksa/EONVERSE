@@ -26,6 +26,7 @@ def load_world(path):
     world.tick = int(data["tick"])
     world.residents = [Resident(**{**r, "path": [tuple(p) for p in r.get("path", [])]}) for r in data["residents"]]
     world.buildings = data["buildings"]
+    world.deposits = data.get("deposits", world.deposits)
     world.farms = data.get("farms", [])
     world.food_supply = float(data["resources"]["food"])
     world.wood_supply = float(data["resources"]["wood"])

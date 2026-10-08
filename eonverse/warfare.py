@@ -7,7 +7,9 @@ def update_warfare(world):
     if world.tick % 40:
         return
     capitals = {c["id"]: c for c in world.settlements}
-    states = sorted(world.states, key=lambda s: s["id"])
+    states = sorted((s for s in world.states if not s.get("dissolved")), key=lambda s: s["id"])
+    from .resources import resource_disputes
+    pressures = {(min(d["requester"], d["holder"]), max(d["requester"], d["holder"])): d["pressure"] for d in resource_disputes(world)}
     for a, b in combinations(states, 2):
         key = (a["id"], b["id"])
         relation = world.relations.get(key)
@@ -19,7 +21,8 @@ def update_warfare(world):
         distance = hypot(ca["x"] - cb["x"], ca["z"] - cb["z"])
         conflict = world.wars.get(key)
         if conflict is None:
-            if (relation["status"] == "rivalry" and distance <= 28
+            if ((relation["status"] == "rivalry" or
+                  (relation["trust"] <= 35 and pressures.get(key, 0) >= 20)) and distance <= 28
                     and a["treasury"] >= 10 and b["treasury"] >= 10
                     and ca["population"] >= 2 and cb["population"] >= 2):
                 world.wars[key] = {"start": world.tick, "turns": 0, "status": "active",
