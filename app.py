@@ -3,6 +3,7 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
+from dotenv import load_dotenv
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
@@ -14,6 +15,7 @@ from eonverse.resource_catalog import MATERIAL_CATALOG
 from eonverse.persistence import load_world, save_world
 
 ROOT = Path(__file__).resolve().parent
+load_dotenv(ROOT / '.env', override=False)
 SAVE_PATH = ROOT / 'data' / 'world.json'
 try:
     world = load_world(SAVE_PATH) if SAVE_PATH.exists() else World()
