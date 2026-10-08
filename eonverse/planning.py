@@ -6,6 +6,7 @@ from .civilization import territorial_owner
 from .open_thinking import observe, CONTROLS, COST, apply_probe
 from .causal_memory import choose_control
 from .strategy_learning import update_strategy_memory, alternative_controls
+from .individuality import preference
 
 MAX_STEPS=3
 MAX_PLAN_RECORDS=16
@@ -14,7 +15,7 @@ def propose_plan(world, state, person, measurements):
     """Combine available actions into a finite, budgeted and revisable plan."""
     if not measurements:
         return None
-    target=min(measurements, key=lambda k:(measurements[k],k))
+    target=min(measurements, key=lambda k:(measurements[k] / (0.5 + preference(person,k)),k))
     models=state.get("causal_models",{})
     ranked=[]
     for control in CONTROLS:
