@@ -35,6 +35,7 @@ from .ecological_feedback import update_environmental_learning
 from .ecology import update_ecology
 from .environment import update_environment
 from .adaptation import update_adaptation
+from .migration import update_migration, update_settlement_learning, update_settlement_adaptation
 from .science import update_science
 from .medicine import seed_herbs, update_medicine, teach_medicine
 from .public_health import update_public_health
@@ -215,6 +216,9 @@ class World:
         update_ecology(self)
         update_environment(self)
         update_adaptation(self)
+        update_migration(self)
+        update_settlement_learning(self)
+        update_settlement_adaptation(self)
         update_environmental_learning(self)
         update_roads(self)
         update_infrastructure(self)
