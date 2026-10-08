@@ -46,15 +46,18 @@ def update_resources(world):
         state.setdefault("resource_inventory", {})
         state.setdefault("resource_shortages", [])
     for deposit in world.deposits:
-        owner = territorial_owner(world, deposit["x"], deposit["z"])
+        owner = deposit.get("controller_state_id") or territorial_owner(world, deposit["x"], deposit["z"])
         state = states.get(owner)
         deposit.setdefault("difficulty", 3)
         deposit.setdefault("quality", 3)
         deposit.setdefault("discovered_by", [])
         deposit.setdefault("development", {})
         if deposit["renewable"]:
-            deposit["remaining"] = min(deposit["capacity"],
-                                       deposit["remaining"] + max(1, deposit["capacity"] // 15))
+            # Timber growth slows under industrial pollution and repeated harvesting.
+            growth = max(1, deposit["capacity"] // 15)
+            if deposit["kind"] in {"timber", "hardwood", "softwood", "bamboo"} and state:
+                growth = max(0, growth - int(state.get("pollution", 0) // 10))
+            deposit["remaining"] = min(deposit["capacity"], deposit["remaining"] + growth)
         if state is None:
             continue
         # Geological survey: finite budget; resources cannot be harvested before discovery.
@@ -73,7 +76,8 @@ def update_resources(world):
                 continue
             state["treasury"] = round(state["treasury"] - cost, 2)
             deposit["development"][str(state["id"])] = True
-        amount = min(deposit["remaining"], max(1, 6 - deposit["difficulty"]))
+        effective_difficulty = max(1, deposit["difficulty"] - (state.get("extraction_technology", 1) - 1) // 2)
+        amount = min(deposit["remaining"], max(1, 6 - effective_difficulty))
         upkeep = round(amount * deposit["difficulty"] * 0.15, 2)
         if state["treasury"] < upkeep:
             continue
@@ -106,7 +110,7 @@ def resource_disputes(world):
             rich = sum(
                 1 for d in world.deposits
                 if d["kind"] in shortages and d["remaining"] > 0 and b["id"] in d.get("discovered_by", [])
-                and territorial_owner(world, d["x"], d["z"]) == b["id"]
+                and (d.get("controller_state_id") or territorial_owner(world, d["x"], d["z"])) == b["id"]
             )
             if rich:
                 candidates.append({"requester": a["id"], "holder": b["id"],
