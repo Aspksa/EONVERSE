@@ -24,6 +24,8 @@ from .society import update_society
 from .civic import update_civic
 from .inventions import update_inventions
 from .experiments import update_experiments, inherit_knowledge
+from .science import update_science
+from .medicine import seed_herbs, update_medicine, teach_medicine
 
 
 @dataclass
@@ -48,6 +50,7 @@ class Resident:
     knowledge: dict = field(default_factory=dict)
     long_term_plan: str = 'explore'
     community_id: int | None = None
+    health: float = 100.0
 
 
 @dataclass
@@ -78,12 +81,15 @@ class World:
     lost_shipments: int = 0
     infrastructure: dict[tuple[int, int], dict] = field(default_factory=dict)
     communities: list[dict] = field(default_factory=list)
+    herb_patches: list[dict] = field(default_factory=list)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
         self.terrain = Terrain(self.seed)
         if not self.deposits:
             self.deposits = create_deposits(self.seed, self.terrain)
+        if not self.herb_patches:
+            self.herb_patches = seed_herbs(self.seed, self.terrain)
         if not self.residents:
             for _ in range(12):
                 self.spawn()
@@ -190,6 +196,9 @@ class World:
         update_industry(self)
         update_inventions(self)
         update_experiments(self)
+        update_science(self)
+        teach_medicine(self)
+        update_medicine(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
         self.chronicle = self.chronicle[-500:]
@@ -209,6 +218,7 @@ class World:
             "settlements": [c.copy() for c in self.settlements],
             "states": [c.copy() for c in self.states],
             "communities": [dict(id=g["id"], members=g["members"][:]) for g in self.communities],
+            "herb_patches": [h.copy() for h in self.herb_patches],
             "trade_routes": [{"from": a, "to": b, "transactions": count} for (a,b),count in sorted(self.trade_routes.items())],
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
