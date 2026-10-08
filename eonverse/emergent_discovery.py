@@ -32,7 +32,18 @@ def update_discoveries(world):
                            (p.personality.get("curiosity", .5) + p.knowledge.get("research", 0) / 10, -p.id))
         archive = state.setdefault("observed_practices", {})
         experiments = state.setdefault("social_trials", [])
-        # Prefer practices with evidence, but reserve exploration to test alternatives.
+        pending = state.pop("pending_observation", None)
+        if pending:
+            action = pending["action"]
+            gain = round(outcome(world, state) - pending["baseline"], 3)
+            evidence = archive.setdefault(action, {"tries": 0, "average_gain": 0})
+            n = evidence["tries"]
+            evidence["average_gain"] = round((evidence["average_gain"] * n + gain) / (n + 1), 3)
+            evidence["tries"] = n + 1
+            experiments.append({"tick": world.tick, "citizen_id": pending["citizen_id"],
+                                "action": action, "observed_gain": gain})
+            del experiments[:-64]
+        # Explore new environmental actions and exploit learned effects.
         index = (world.tick // 40 + investigator.id + len(experiments)) % len(ACTIONS)
         proposed = ACTIONS[index]
         if archive and len(experiments) % 4:
@@ -56,14 +67,8 @@ def update_discoveries(world):
                 patient.health = min(100, patient.health + 5)
         else:
             investigator.knowledge["research"] = round(min(10, investigator.knowledge.get("research", 0) + .15), 3)
-        score = round(outcome(world, state) - baseline, 3)
-        evidence = archive.setdefault(proposed, {"tries": 0, "average_gain": 0})
-        n = evidence["tries"]
-        evidence["average_gain"] = round((evidence["average_gain"] * n + score) / (n + 1), 3)
-        evidence["tries"] = n + 1
-        experiments.append({"tick": world.tick, "citizen_id": investigator.id,
-                            "action": proposed, "observed_gain": score})
-        del experiments[:-64]
+        state["pending_observation"] = {"action": proposed, "baseline": baseline,
+                                        "citizen_id": investigator.id}
         investigator.memory["recent_intervention"] = proposed
-        if score > 0:
-            world.history.append(f"Day {world.tick}: citizen #{investigator.id} repeated a useful practice")
+        if pending and gain > 0:
+            world.history.append(f"Day {world.tick}: citizens observed a beneficial environmental change")
