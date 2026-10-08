@@ -23,6 +23,7 @@ from .social import personality, update_social
 from .idea_exchange import update_idea_exchange
 from .individuality import update_individuality
 from .cooperation import update_cooperation
+from .emergent_institutions import update_institutions
 from .society import update_society
 from .civic import update_civic
 from .inventions import update_inventions
@@ -216,6 +217,7 @@ class World:
         update_idea_exchange(self)
         update_individuality(self)
         update_cooperation(self)
+        update_institutions(self)
         update_planning(self)
         update_technology_generations(self)
         additions = self.history[len(old_history):]
