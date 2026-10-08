@@ -12,6 +12,7 @@ def save_world(world: World, path):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     data = world.snapshot()
+    data["resources"] = {"food": world.food_supply, "wood": world.wood_supply}
     data.update({"next_id": world.next_id, "rng_state": world.rng.getstate()})
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(data), encoding="utf-8")
