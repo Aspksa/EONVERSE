@@ -99,3 +99,9 @@ Limitations: geology remains abstract, quality is stored for future downstream p
 The material catalog now distinguishes raw natural deposits from manufactured products. Categories include metals, rare earths, industrial minerals, gemstones, fossil and nuclear fuels, forest products, foods, water/ecology, animal materials, industrial gases, alloys, chemicals, construction, electronics and energy carriers. Browse all IDs and metadata using `GET /api/resources/catalog`.
 
 World generation chooses diverse finite or renewable natural deposits. Manufactured products are catalog entries **only**, not naturally occurring mines: production recipes and factories require a future release. The identifiers are a gameplay abstraction rather than a complete or scientifically exhaustive database of every known material. Existing legacy core resource IDs remain available.
+
+## v0.5.0 — Industry, research, expeditions and environment (proposed)
+
+State-funded expeditions discover nearby hidden deposits, research raises extraction productivity, and factories consume stock to produce steel, tools and machines in deterministic recipe stages. Production causes pollution and states may pay for cleanup; industrial pollution slows forest regrowth. After abstract wars, a victor may gain control of one surviving deposit rather than silently creating any minerals. JSON saves retain research, industrial output and deposit control in state/deposit records.
+
+This is a prototype, not yet a detailed ecology, real caravans, staffed expedition travel, ore-smelting technology tree, or graphical factories. Existing older resident food/wood loops still need integration with the finite resource accounting system.
