@@ -51,6 +51,22 @@ def update_revolutions(world):
             for name in ("food_stock", "wood_stock"):
                 a[name] = round(a.get(name, 0) + b.get(name, 0), 2)
                 b[name] = 0
+            # Transfer finite material inventories and territorial mineral control.
+            source = b.setdefault("resource_inventory", {})
+            destination = a.setdefault("resource_inventory", {})
+            for kind, quantity in source.items():
+                destination[kind] = destination.get(kind, 0) + quantity
+            b["resource_inventory"] = {}
+            for deposit in world.deposits:
+                if deposit.get("controller_state_id") == b["id"]:
+                    deposit["controller_state_id"] = a["id"]
+                if b["id"] in deposit.get("discovered_by", []):
+                    discovered = deposit["discovered_by"]
+                    if a["id"] not in discovered:
+                        discovered.append(a["id"])
+                development = deposit.get("development", {})
+                if development.get(str(b["id"])):
+                    development[str(a["id"])] = True
             for city in world.settlements:
                 if city["state_id"] == b["id"]:
                     city["state_id"] = a["id"]
