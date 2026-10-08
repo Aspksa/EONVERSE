@@ -13,6 +13,7 @@ from .warfare import update_warfare
 from .revolutions import update_revolutions
 from .resources import create_deposits, update_resources, resource_disputes
 from .resource_market import update_resource_trade
+from .industry import update_industry
 
 
 @dataclass
@@ -155,6 +156,7 @@ class World:
         update_revolutions(self)
         update_resources(self)
         update_resource_trade(self)
+        update_industry(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
         self.chronicle = self.chronicle[-500:]
