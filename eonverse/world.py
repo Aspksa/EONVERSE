@@ -167,7 +167,7 @@ class World:
             act(self,person)
         if self.tick % 12 == 0:
             self.food_supply += sum(self.harvest_natural("grain", 2.5, farm["x"], farm["z"]) for farm in self.farms)
-        if self.tick % 30 == 0 and self.wood_supply >= 15 and len(self.farms) < 18:
+        if self.tick % 30 == 0 and self.residents and self.wood_supply >= 15 and len(self.farms) < 18:
             self.wood_supply -= 15
             farmer = self.rng.choice(self.residents)
             self.farms.append({"id": len(self.farms) + 1, "x": farmer.x, "z": farmer.z})
@@ -180,12 +180,12 @@ class World:
                 buyer.food = min(100, buyer.food + 5)
                 seller.food -= 5
                 self.trades += 1
-        if self.tick % 25 == 0 and self.wood_supply >= 20:
+        if self.tick % 25 == 0 and self.residents and self.wood_supply >= 20:
             self.wood_supply -= 20
             location = self.residents[self.rng.randrange(len(self.residents))]
             self.buildings.append({"id": len(self.buildings) + 1, "x": location.x, "z": location.z})
             self.history.append(f"Day {self.tick}: settlers built house #{len(self.buildings)}")
-        if self.tick % 80 == 0 and self.food_supply >= 30 and len(self.residents) < 120:
+        if self.tick % 80 == 0 and self.residents and self.food_supply >= 30 and len(self.residents) < 120:
             self.food_supply -= 30
             newcomer = self.spawn()
             newcomer.age = 0
@@ -196,14 +196,15 @@ class World:
             self.history.append(f"Day {self.tick}: child #{newcomer.id} was born")
         survivors = []
         for person in self.residents:
-            if person.age >= 90 or (person.food <= 0 and self.tick % 20 == 0):
+            if person.food <= 0:
+                person.health = max(0, person.health - 2)
+            if person.age >= 90 or person.health <= 0:
                 self.deaths += 1
                 self.history.append(f"Day {self.tick}: resident #{person.id} passed away")
             else:
                 survivors.append(person)
         self.residents = survivors
-        if not self.residents:
-            self.spawn()
+        # Extinction is not automatically reversed by spawning an adult.
         update_social(self)
         update_civilizations(self)
         update_politics(self)
