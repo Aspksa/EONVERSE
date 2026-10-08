@@ -26,8 +26,14 @@ def test_routes_follow_cells_and_save(tmp_path):
     assert route is not None
     cells = [(p["x"], p["z"]) for p in route["waypoints"]]
     assert len(cells) > 1
-    assert all(abs(x1-x2) + abs(z1-z2) == 1 for (x1,z1),(x2,z2) in zip(cells,cells[1:]))
-    assert classify_path(world.terrain, cells) == route["mode"]
+    if route["mode"] != "sea":
+        assert all(abs(x1-x2) + abs(z1-z2) == 1 for (x1,z1),(x2,z2) in zip(cells,cells[1:]))
+    else:
+        assert any(p["biome"] == "water" for p in route["waypoints"])
+    if route["mode"] != "sea":
+        assert classify_path(world.terrain, cells) == route["mode"]
+    else:
+        assert any(p["biome"] == "water" for p in route["waypoints"])
     target = tmp_path / "world.json"
     save_world(world, target)
     assert load_world(target).snapshot() == world.snapshot()

@@ -133,3 +133,7 @@ Routes require separately funded built assets. States share construction costs f
 ## v0.5.7 — Constructed road cells and maritime lanes (proposed)
 
 Paid land corridors are exposed as road tiles and shown as 3D paving. Coastal access searches nearby land-water boundaries; sea routes require a continuous water-only channel between port approaches and are preferred when competitive with a land route. The viewer marks funded coastal ports and uses ship-shaped cargo objects on maritime corridors. Shipments inherit existing travel-time, cargo, risk and blockade rules. These are lightweight 3D proxies and straight coastal transfer segments, not yet ship physics, harbor construction per tile, or dedicated fleets.
+
+## v0.6.0 — Resident Cognitive Foundation (proposed)
+
+Each inhabitant has a deterministic utility-based brain. Needs drive eating and resting, while resource scarcity drives deliberate gathering. Agents remember the last resource and deposit target and navigate existing terrain routes instead of randomly harvesting from an arbitrary location. Goals and individual memory are persisted with residents, and tests check deterministic replay. This is rule-based simulated agency, not a conscious entity, not an external LLM, and not yet social learning, interpersonal relationships or dialogue.

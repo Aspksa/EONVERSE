@@ -18,6 +18,7 @@ from .logistics import update_shipments
 from .transport import update_roads, infrastructure_snapshot
 from .infrastructure import update_infrastructure
 from .road_grid import built_road_tiles, ports_snapshot
+from .cognition import think, act
 
 
 @dataclass
@@ -34,6 +35,8 @@ class Resident:
     path: list[tuple[int, int]] = field(default_factory=list)
     family_id: int = 0
     coins: float = 5.0
+    goal: str = 'explore'
+    memory: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -105,35 +108,19 @@ class World:
             if self.tick % 10 == 0:
                 person.coins += .25
             person.energy = max(0, person.energy - 0.13)
-            if not person.path:
+            goal=think(self, person)
+            if goal=="explore" and not person.path:
                 for _ in range(8):
-                    goal = (self.rng.randint(-25, 25), self.rng.randint(-25, 25))
-                    if self.terrain.walkable(*goal):
-                        person.path = self.terrain.route((person.x, person.z), goal)[1:]
+                    target=(self.rng.randint(-25,25),self.rng.randint(-25,25))
+                    if self.terrain.walkable(*target):
+                        person.path=self.terrain.route((person.x,person.z),target)[1:]
                         if person.path:
                             break
-            if person.path:
-                nx, nz = person.path.pop(0)
-                if self.terrain.walkable(nx, nz):
-                    person.x, person.z = float(nx), float(nz)
-            if person.food < 45 and self.food_supply > 0:
-                taken = min(8, self.food_supply)
-                self.food_supply -= taken
-                person.food = min(100, person.food + taken)
-                person.role = "forager"
-            elif self.rng.random() < 0.12:
-                harvest = self.harvest_natural("grain", self.rng.uniform(1, 4), person.x, person.z)
-                self.food_supply += harvest
-                person.role = "farmer" if harvest else "explorer"
-            elif self.rng.random() < 0.12:
-                harvest = self.harvest_natural("timber", self.rng.uniform(1, 3), person.x, person.z)
-                self.wood_supply += harvest
-                person.role = "woodcutter" if harvest else "explorer"
-            else:
-                person.role = "explorer"
-            if person.energy < 40:
-                person.energy = min(100, person.energy + 1.6)
-                person.role = "resting"
+            if person.path and goal not in ("eat","rest"):
+                nx,nz=person.path.pop(0)
+                if self.terrain.walkable(nx,nz):
+                    person.x,person.z=float(nx),float(nz)
+            act(self,person)
         if self.tick % 12 == 0:
             self.food_supply += sum(self.harvest_natural("grain", 2.5, farm["x"], farm["z"]) for farm in self.farms)
         if self.tick % 30 == 0 and self.wood_supply >= 15 and len(self.farms) < 18:
