@@ -65,3 +65,7 @@ This is the first *foundation* for civilization gameplay. Diplomacy, governmenta
 ## v0.4.3 — Early state economy (proposed)
 
 Prototype adds periodic tax revenue, state food/wood stockpiles and proximity-based interstate food trading, plus saved trade route transaction counters. Trade is abstracted: no physical caravans, markets, inflation or fully conserved resident-level money flows yet.
+
+## v0.4.4 — Diplomacy (proposed)
+
+Every 40 simulation ticks, pairs of states assess geographic proximity, existing trade and treasury inequality. Bilateral trust is bounded between 0 and 100 and determines neutral, treaty, alliance and rivalry statuses. Changes enter the world's history and diplomacy state is saved in the world snapshot. This is rule-based diplomacy; negotiation, treaty clauses and war remain future features.
