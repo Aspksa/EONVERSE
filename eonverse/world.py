@@ -31,6 +31,7 @@ from .experiments import update_experiments, inherit_knowledge
 from .culture import update_culture
 from .mechanics import update_mechanics
 from .research_evolution import update_research_evolution
+from .ecological_feedback import update_environmental_learning
 from .ecology import update_ecology
 from .science import update_science
 from .medicine import seed_herbs, update_medicine, teach_medicine
@@ -210,6 +211,7 @@ class World:
         update_revolutions(self)
         update_resources(self)
         update_ecology(self)
+        update_environmental_learning(self)
         update_roads(self)
         update_infrastructure(self)
         update_resource_trade(self)

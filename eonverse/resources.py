@@ -2,6 +2,7 @@
 from math import hypot
 from random import Random
 from .resource_catalog import RAW_RESOURCES, MATERIAL_CATALOG
+from .ecological_feedback import regrowth_rate
 
 CATALOG = {
     "iron": {"renewable": False, "value": 6, "strategic": True},
@@ -57,6 +58,7 @@ def update_resources(world):
             growth = max(1, deposit["capacity"] // 15)
             if deposit["kind"] in {"timber", "hardwood", "softwood", "bamboo"} and state:
                 growth = max(0, growth - int(state.get("pollution", 0) // 10))
+            growth = regrowth_rate(world,deposit,growth)
             deposit["remaining"] = min(deposit["capacity"], deposit["remaining"] + growth)
         if state is None:
             continue

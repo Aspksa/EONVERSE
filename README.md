@@ -209,3 +209,7 @@ Successful and unsuccessful mechanical trials may be refined through repeated pa
 ## v0.8.4–v0.8.7 — Living planet (proposed)
 
 A bounded ecosystem now populates habitable cells with abstract producers and consumers. Organisms have energy budgets, inherited efficiency and resilience traits with small mutations, and survival and reproduction depend on local resources. Soil conditions evolve slowly with occupancy, while states accrue periodically sampled local demographic histories. Ecosystems are deterministic and saved in JSON. This is a coarse ecological model, not a full food web, genetic simulator, geomorphology engine or physically realistic evolution; environmental interactions are intentionally simple.
+
+## v0.8.8 — Ecological feedback
+
+Locally observed organisms and soil now influence regeneration of nearby vegetal deposits. Residents record nearby renewable stock scarcity and gradually adjust attention to food without being instructed to invent a particular remedy. The old bounded ecological abstraction remains: these are approximate habitat effects, not complete climate, hydrology or trophic webs. Save/replay tests cover ecological coupling.
