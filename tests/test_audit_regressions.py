@@ -143,7 +143,7 @@ def test_trade_does_not_destroy_excess_food():
     buyer, seller = world.residents
     buyer.food = 99
     buyer.coins = 10
-    seller.food = 50
+    seller.food = 99
     world.tick = 14
     world.step()
     assert world.trades == 0
