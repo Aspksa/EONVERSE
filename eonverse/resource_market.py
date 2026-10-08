@@ -1,5 +1,6 @@
 """Scarcity-driven inter-state resource trade, priced by local shortages."""
 from itertools import combinations
+from .resource_catalog import RAW_RESOURCES
 
 BASE_PRICES = {"iron": 6, "copper": 4, "gold": 10, "coal": 5,
                "stone": 2, "timber": 3, "freshwater": 8, "grain": 5}
@@ -17,12 +18,12 @@ def update_resource_trade(world):
         for buyer, seller in ((a, b), (b, a)):
             buyer_stock = buyer.setdefault("resource_inventory", {})
             seller_stock = seller.setdefault("resource_inventory", {})
-            for resource in BASE_PRICES:
+            for resource in RAW_RESOURCES:
                 if buyer_stock.get(resource, 0) >= 4 or seller_stock.get(resource, 0) < 10:
                     continue
                 units = min(3, seller_stock[resource] - 7)
                 scarcity_multiplier = 1.5 if resource in buyer.get("resource_shortages", []) else 1.0
-                price = round(units * BASE_PRICES[resource] * scarcity_multiplier, 2)
+                price = round(units * RAW_RESOURCES[resource]["value"] * scarcity_multiplier, 2)
                 if buyer.get("treasury", 0) < price:
                     continue
                 buyer["treasury"] = round(buyer["treasury"] - price, 2)
