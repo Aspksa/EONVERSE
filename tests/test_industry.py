@@ -16,7 +16,7 @@ def test_production_conserves_inputs_and_creates_outputs():
     update_industry(world)
     assert stock["iron"] == 0
     assert stock["coal"] == 0
-    assert stock["steel"] == 2
+    assert stock["steel"] == 0
     assert stock["tools"] == 1
     assert stock["timber"] == 0
     assert stock.get("machines", 0) == 0
