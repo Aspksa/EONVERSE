@@ -87,3 +87,9 @@ The dashboard now lists states and their treasury, supports a camera jump to the
 Seeded deposits include iron, copper, gold, coal, stone, timber, freshwater and grain. Mines have finite reserves while renewable resources regenerate up to local capacity. States gain inventories based on territorial influence; essential grain and freshwater upkeep can create shortages. The API provides resource deposits and a list of potential resource disputes. In the existing abstract warfare logic, scarcity can become another *conditional* reason for conflict if trust is low and both states can afford war.
 
 Current limits: no 3D mine models, production chains, physical trade, treaties explicitly exchanging resources, or simulation of battlefield ownership change. Disputes are pressure signals, not automatic capture of mineral deposits. The resource system is deliberately incremental and retains saved quantities across restart.
+
+## v0.4.9 — Prospecting and extraction economics (proposed)
+
+Deposits now have extraction difficulty (1–5), quality (1–5), and discovery records. States must pay to survey mineral or natural resource locations, invest to develop extraction, and pay continuing operational costs. Difficult deposits extract less per cycle. State resource trading transfers finite stock, with prices increasing under scarcity, rather than generating stock out of nowhere. The state of exploration and resource trading survives JSON saves.
+
+Limitations: geology remains abstract, quality is stored for future downstream processing, state prospecting is automatic, no map fog-of-war or player-controlled survey expedition yet; no deep supply chains, transport costs or real resource auctions. The pre-existing generic economy remains a separate prototype.

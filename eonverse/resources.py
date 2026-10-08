@@ -28,7 +28,7 @@ def create_deposits(seed, terrain):
         capacity = rng.randint(60, 160) if renewable else rng.randint(80, 500)
         deposits.append({"id": idx + 1, "kind": kind, "x": x, "z": z,
                          "capacity": capacity, "remaining": capacity,
-                         "renewable": renewable})
+                         "renewable": renewable, "difficulty": rng.randint(1, 5), "quality": rng.randint(1, 5), "discovered_by": [], "development": {}})
     return deposits
 
 def update_resources(world):
@@ -41,14 +41,38 @@ def update_resources(world):
         state.setdefault("resource_inventory", {})
         state.setdefault("resource_shortages", [])
     for deposit in world.deposits:
+        owner = territorial_owner(world, deposit["x"], deposit["z"])
+        state = states.get(owner)
+        deposit.setdefault("difficulty", 3)
+        deposit.setdefault("quality", 3)
+        deposit.setdefault("discovered_by", [])
+        deposit.setdefault("development", {})
         if deposit["renewable"]:
             deposit["remaining"] = min(deposit["capacity"],
                                        deposit["remaining"] + max(1, deposit["capacity"] // 15))
-        owner = territorial_owner(world, deposit["x"], deposit["z"])
-        state = states.get(owner)
-        if not state or deposit["remaining"] <= 0:
+        if state is None:
             continue
-        amount = min(3, deposit["remaining"])
+        # Geological survey: finite budget; resources cannot be harvested before discovery.
+        if state["id"] not in deposit["discovered_by"]:
+            survey_cost = 2 + deposit["difficulty"]
+            if state["treasury"] < survey_cost:
+                continue
+            state["treasury"] = round(state["treasury"] - survey_cost, 2)
+            deposit["discovered_by"].append(state["id"])
+            world.history.append(f"Day {world.tick}: {state['name']} discovered {deposit['kind']} #{deposit['id']}")
+        if deposit["remaining"] <= 0:
+            continue
+        if not deposit["development"].get(str(state["id"])):
+            cost = 4 * deposit["difficulty"]
+            if state["treasury"] < cost:
+                continue
+            state["treasury"] = round(state["treasury"] - cost, 2)
+            deposit["development"][str(state["id"])] = True
+        amount = min(deposit["remaining"], max(1, 6 - deposit["difficulty"]))
+        upkeep = round(amount * deposit["difficulty"] * 0.15, 2)
+        if state["treasury"] < upkeep:
+            continue
+        state["treasury"] = round(state["treasury"] - upkeep, 2)
         deposit["remaining"] -= amount
         inventory = state["resource_inventory"]
         inventory[deposit["kind"]] = inventory.get(deposit["kind"], 0) + amount
@@ -76,7 +100,7 @@ def resource_disputes(world):
                 continue
             rich = sum(
                 1 for d in world.deposits
-                if d["kind"] in shortages and d["remaining"] > 0
+                if d["kind"] in shortages and d["remaining"] > 0 and b["id"] in d.get("discovered_by", [])
                 and territorial_owner(world, d["x"], d["z"]) == b["id"]
             )
             if rich:
