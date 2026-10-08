@@ -7,8 +7,8 @@ from .civilization import territorial_owner
 from .causal_memory import record_evidence, choose_control
 
 OBSERVABLES=("health","hygiene","food","energy")
-CONTROLS=("sanitation","contact_reduction","supplies","research")
-COST={"sanitation":3,"contact_reduction":1,"supplies":2,"research":4}
+CONTROLS=("sanitation","contact_reduction","supplies","research","observation")
+COST={"sanitation":3,"contact_reduction":1,"supplies":2,"research":4,"observation":0}
 MAX_HYPOTHESES=24
 
 def observe(world, state):
@@ -64,7 +64,7 @@ def apply_probe(world,state,people,control):
         state["medicinal_inventory"]-=1
         patient=min(people,key=lambda p:(p.health,p.id))
         patient.health=min(100,patient.health+5)
-    else:
+    elif control in ("research", "observation"):
         state["research_observations"]=state.get("research_observations",0)+1
     return True
 
@@ -102,7 +102,13 @@ def update_open_thinking(world):
         if not ideas:continue
         idea=max(ideas)[2]
         idea["control"]=choose_control(idea["target"],state.get("causal_models",{}),CONTROLS,idea["proposer_id"])
-        if apply_probe(world,state,people,idea["control"]):
+        if not apply_probe(world,state,people,idea["control"]):
+            # Every settlement can begin observing without minting money or materials.
+            idea["control"] = "observation"
+            applied = apply_probe(world,state,people,"observation")
+        else:
+            applied = True
+        if applied:
             recent=[h for h in history[-8:] if h.get("target")==idea["target"]]
             trend=round(sum(h.get("result",0) for h in recent)/len(recent),3) if recent else 0
             idea.update({"baseline":data[idea["target"]],"control_trend":trend,
