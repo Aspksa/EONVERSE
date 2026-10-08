@@ -69,3 +69,7 @@ Prototype adds periodic tax revenue, state food/wood stockpiles and proximity-ba
 ## v0.4.4 — Diplomacy (proposed)
 
 Every 40 simulation ticks, pairs of states assess geographic proximity, existing trade and treasury inequality. Bilateral trust is bounded between 0 and 100 and determines neutral, treaty, alliance and rivalry statuses. Changes enter the world's history and diplomacy state is saved in the world snapshot. This is rule-based diplomacy; negotiation, treaty clauses and war remain future features.
+
+## v0.4.5 — Abstract warfare (proposed)
+
+Rival nearby states with sufficient population and treasury can enter a war. Conflicts proceed in deterministic rounds that consume state funds and food, record abstract losses and conclude with a peace state. War outcomes appear in the history and are preserved in save files. This is an abstract strategic prototype: no military units, siege simulation, physical casualties or territorial annexation yet.
