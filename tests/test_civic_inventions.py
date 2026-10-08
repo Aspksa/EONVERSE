@@ -40,6 +40,7 @@ def test_inventions_require_funds_and_real_materials():
     state,p=setup_state(world)
     p.profession="builder"
     p.knowledge["building"]=3
+    p.knowledge["research"]=10  # Ensure this inventor wins the deterministic ranking.
     state["resource_inventory"]={}
     state["treasury"]=100
     world.tick=320
