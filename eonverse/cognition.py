@@ -24,10 +24,12 @@ def choose_goal(world, person):
         action = "gather_food" if kind == "grain" else "gather_wood"
         habit = habits.get("gather_" + kind, habits.get(action, 0))
         evidence = beliefs.get(action + ":" + need, .5)
-        score += 14 * (priority - .5) + 3 * (evidence - .5) + min(5, habit) * .6
+        # Learned values shape choices when survival needs do not dominate.
+        # An agent can prefer a farther resource based on its own history.
+        score += 24 * (priority - .5) + 12 * (evidence - .5) + min(10, habit) * 1.2
         # With an empty pantry and low personal food, prioritize real grain.
-        if kind == "grain" and (person.food < 45 or world.food_supply < 15):
-            score += 28
+        if kind == "grain" and (person.food < 35 or world.food_supply < 10):
+            score += 32
         candidates.append((score-distance*.9, -distance, -deposit["id"], deposit))
     if candidates:
         _, _, _, deposit = max(candidates, key=lambda entry: entry[:3])
