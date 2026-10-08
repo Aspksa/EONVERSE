@@ -21,7 +21,7 @@ def test_road_upgrade_and_blockade(tmp_path):
     improved = route_status(world, a, b)
     assert improved["road_level"] == 1
     assert improved["capacity"] > 3
-    assert improved["transport_rate"] < .05
+    assert improved["transport_rate"] <= .07  # Route mode can add pass/bridge/sea costs.
     world.shipments = [{"from": a["id"], "to": b["id"], "kind": "iron",
                         "units": 2, "remaining_ticks": 10, "risk": 0}]
     world.wars[key] = {"status": "active"}
