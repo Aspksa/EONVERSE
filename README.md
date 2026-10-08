@@ -61,3 +61,7 @@ Each 50 simulation ticks, construction may trigger the founding of a new settlem
 This is the first *foundation* for civilization gameplay. Diplomacy, governmental elections, war and complex economic institutions remain future work. Cities and states persist in local JSON snapshots.
 
 **Dependency:** stacked on v0.3.0; resolve and merge earlier PRs with successful CI before promoting to main.
+
+## v0.4.3 — Early state economy (proposed)
+
+Prototype adds periodic tax revenue, state food/wood stockpiles and proximity-based interstate food trading, plus saved trade route transaction counters. Trade is abstracted: no physical caravans, markets, inflation or fully conserved resident-level money flows yet.

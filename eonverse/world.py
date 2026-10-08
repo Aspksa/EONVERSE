@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from .terrain import Terrain
 from .civilization import update_civilizations
 from .politics import update_politics
+from .economy import update_economy
 
 
 @dataclass
@@ -41,6 +42,7 @@ class World:
     trades: int = 0
     settlements: list[dict] = field(default_factory=list)
     states: list[dict] = field(default_factory=list)
+    trade_routes: dict[tuple[int, int], int] = field(default_factory=dict)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -134,6 +136,7 @@ class World:
             self.spawn()
         update_civilizations(self)
         update_politics(self)
+        update_economy(self)
         self.history = self.history[-30:]
 
     def snapshot(self):
@@ -149,5 +152,6 @@ class World:
             "trades": self.trades,
             "settlements": [c.copy() for c in self.settlements],
             "states": [c.copy() for c in self.states],
+            "trade_routes": [{"from": a, "to": b, "transactions": count} for (a,b),count in sorted(self.trade_routes.items())],
             "history": self.history.copy(),
         }
