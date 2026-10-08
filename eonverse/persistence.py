@@ -1,5 +1,6 @@
 """JSON saves for trusted local simulation data. No pickle or executable payloads."""
 import json
+import math
 from pathlib import Path
 from eonverse.world import World, Resident
 
@@ -22,6 +23,17 @@ def load_world(path):
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("seed") is None or not isinstance(data.get("residents"), list):
         raise ValueError("Invalid EONVERSE save")
+    if type(data.get("tick")) is not int or data["tick"] < 0:
+        raise ValueError("Invalid world tick")
+    resources = data.get("resources")
+    if not isinstance(resources, dict):
+        raise ValueError("Invalid resource reserves")
+    for kind in ("food", "wood"):
+        value = resources.get(kind)
+        if type(value) not in (int, float) or not math.isfinite(value) or value < 0:
+            raise ValueError("Invalid resource reserve: " + kind)
+    if type(data.get("next_id")) is not int or data["next_id"] < 1:
+        raise ValueError("Invalid resident counter")
     world = World(seed=int(data["seed"]))
     world.tick = int(data["tick"])
     world.residents = [Resident(**{**r, "path": [tuple(p) for p in r.get("path", [])]}) for r in data["residents"]]
