@@ -189,3 +189,7 @@ Nearby residents with reciprocal trust can exchange evidence-backed ideas. Share
 ## v0.7.3 — Evolving individuality
 
 Residents accumulate bounded personal beliefs about interventions, preferences over needs, and habits based on repeated experience. Trusted shared evidence can weakly update a belief without forcing consensus. Personal priorities influence which problem each planner addresses, allowing differing decisions in the same world conditions. Memory remains deterministic across save/load. These are simplified adaptive tendencies, not conscious persons or unlimited self-directed cognition.
+
+## v0.7.4 — Voluntary cooperation
+
+Nearby adults may form goal-aligned associations when both parties trust each other and agree on the most urgent personal need. Members receive simple responsibilities based on demonstrated research experience; groups dissolve when proximity, trust or shared purpose disappears. Associations and members' memories persist across saves. This is an early, bounded association mechanism rather than emergent arbitrary institutions, collective negotiation or autonomous new action primitives.
