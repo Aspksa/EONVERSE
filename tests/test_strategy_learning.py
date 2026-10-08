@@ -18,7 +18,7 @@ def test_transfer_is_bounded_and_new_goal_can_be_explored():
     assert penalty(person,"food","research")>0
     assert penalty(person,"food","research")<penalty(person,"health","research")
     update_strategy_memory({},person,"food","research",3)
-    assert person.memory["strategy_experience"]["food:research"]["mean_gain"]==3
+    assert person.memory["strategy_experience"]["research:food"]["mean_gain"]==3
 
 def test_learning_persists_through_world_save(tmp_path):
     world=World(42)
