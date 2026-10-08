@@ -11,7 +11,7 @@ def update_economy(world):
         if city is None:
             continue
         population = city["population"]
-        tax_rate = .04 if state.get("law") == "conservation" else .08
+        tax_rate = state.get("civic_effects", {}).get("tax_rate", .04 if state.get("law") == "conservation" else .08)
         collected = round(population * tax_rate, 2)
         state["treasury"] = round(state["treasury"] + collected, 2)
         state["food_stock"] = round(state.get("food_stock", 0) + min(6, population * .4), 2)
