@@ -11,11 +11,41 @@ from urllib.request import Request, urlopen
 ENDPOINT = "https://foundation-models.api.cloud.ru/v1/chat/completions"
 ALLOWED = {"grain", "timber"}
 
+_runtime_key = None
+_runtime_model = None
+_runtime_enabled = False
+
+
+def configure(key, model="DeepSeek-V4-Flash"):
+    global _runtime_key, _runtime_model, _runtime_enabled
+    if not isinstance(key, str) or not 8 <= len(key) <= 4096:
+        raise ValueError("Invalid Cloud.ru API key")
+    if model != "DeepSeek-V4-Flash":
+        raise ValueError("Unsupported model")
+    _runtime_key, _runtime_model, _runtime_enabled = key, model, True
+
+
+def disconnect():
+    global _runtime_key, _runtime_model, _runtime_enabled
+    _runtime_key, _runtime_model, _runtime_enabled = None, None, False
+
+
+def credentials():
+    if _runtime_enabled and _runtime_key:
+        return _runtime_key, _runtime_model
+    if os.getenv("EONVERSE_AI_ENABLED") == "1":
+        return os.getenv("CLOUDRU_API_KEY"), os.getenv("CLOUDRU_MODEL")
+    return None, None
+
+
+def status():
+    return {"enabled": enabled(), "configured": bool(_runtime_key)}
+
+
 
 def enabled():
-    return (os.getenv("EONVERSE_AI_ENABLED") == "1"
-            and bool(os.getenv("CLOUDRU_API_KEY"))
-            and bool(os.getenv("CLOUDRU_MODEL")))
+    key, model = credentials()
+    return bool(key and model == "DeepSeek-V4-Flash")
 
 
 def validate_proposal(payload):
@@ -34,8 +64,9 @@ def request_proposal(context):
     """Blocking network call, intended exclusively for asyncio.to_thread."""
     if not enabled():
         return None
-    key = os.environ["CLOUDRU_API_KEY"]
-    model = os.environ["CLOUDRU_MODEL"]
+    key, model = credentials()
+    if not key or model != "DeepSeek-V4-Flash":
+        return None
     prompt = (
         "You advise one simulated civilian. Return ONLY a JSON object with "
         'fields "focus" ("grain" or "timber") and "reason" (up to 200 chars). '
