@@ -47,3 +47,9 @@ A reproducible 65×65 terrain grid creates forest, grassland, beaches, highlands
 Tests in `tests/test_terrain.py` cover seeded generation, safe routes and residents remaining on land.
 
 **Next action:** confirm GitHub CI, then merge v0.1.0 first and this v0.2.0 pull request second. Future work: height-aware models, better pathfinding, save/load, dynamic forestry and agent decisions.
+
+## v0.3.0 — Lifecycle, economy and persistence (proposed)
+
+Adds family groups, births, aging and mortality, farm production, simplified resident-to-resident trades, plus automatic local JSON save/load in `data/world.json`. The server saves every 30 simulation ticks and on normal shutdown. No cloud connection is needed. See `tests/test_lifecycle.py` for determinism across restarts.
+
+**Important:** save files are local trusted inputs, not a secure format for files received from other people. This is a prototype: no hereditary traits, actual marriages, markets, or economy-balancing guarantees yet.
