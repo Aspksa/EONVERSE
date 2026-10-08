@@ -72,6 +72,19 @@ class World:
         self.residents.append(resident)
         return resident
 
+    def harvest_natural(self, kind: str, wanted: float) -> float:
+        """Take natural supply only from actual finite/regrowing deposits."""
+        if wanted <= 0:
+            return 0.0
+        remaining = wanted
+        for deposit in self.deposits:
+            if deposit["kind"] != kind or remaining <= 0:
+                continue
+            amount = min(remaining, max(0, deposit["remaining"]))
+            deposit["remaining"] -= amount
+            remaining -= amount
+        return wanted - remaining
+
     def step(self):
         old_history = list(self.history)
         self.tick += 1
@@ -98,20 +111,20 @@ class World:
                 person.food = min(100, person.food + taken)
                 person.role = "forager"
             elif self.rng.random() < 0.12:
-                harvest = self.rng.uniform(1, 4)
+                harvest = self.harvest_natural("grain", self.rng.uniform(1, 4))
                 self.food_supply += harvest
-                person.role = "farmer"
+                person.role = "farmer" if harvest else "explorer"
             elif self.rng.random() < 0.12:
-                harvest = self.rng.uniform(1, 3)
+                harvest = self.harvest_natural("timber", self.rng.uniform(1, 3))
                 self.wood_supply += harvest
-                person.role = "woodcutter"
+                person.role = "woodcutter" if harvest else "explorer"
             else:
                 person.role = "explorer"
             if person.energy < 40:
                 person.energy = min(100, person.energy + 1.6)
                 person.role = "resting"
         if self.tick % 12 == 0:
-            self.food_supply += len(self.farms) * 2.5
+            self.food_supply += self.harvest_natural("grain", len(self.farms) * 2.5)
         if self.tick % 30 == 0 and self.wood_supply >= 15 and len(self.farms) < 18:
             self.wood_supply -= 15
             farmer = self.rng.choice(self.residents)
