@@ -35,7 +35,25 @@ def generate_hypothesis(person, observations, archive):
 
 def apply_probe(world,state,people,control):
     cost=COST[control]
-    if state.get("treasury",0)<cost:return False
+    if control=="supplies" and not state.get("medicinal_inventory",0):
+        return False
+    deficit=round(max(0,cost-state.get("treasury",0)),2)
+    if deficit:
+        # Willing adult researchers can finance tests with existing coins.
+        donors=sorted((p for p in people if p.age>=16
+                       and p.personality.get("curiosity",0)>=.6 and p.coins>2),
+                      key=lambda p:p.id)
+        pledges=[]
+        for donor in donors:
+            contribution=round(min(deficit,donor.coins-2,2),2)
+            if contribution>0:
+                pledges.append((donor,contribution))
+                deficit=round(deficit-contribution,2)
+            if deficit<=0:break
+        if deficit>0:return False
+        for donor,amount in pledges:
+            donor.coins=round(donor.coins-amount,2)
+            state["treasury"]=round(state.get("treasury",0)+amount,2)
     state["treasury"]=round(state["treasury"]-cost,2)
     if control=="sanitation":
         state["sanitation"]=min(100,state.get("sanitation",50)+5)
@@ -43,9 +61,6 @@ def apply_probe(world,state,people,control):
     elif control=="contact_reduction":
         state["contact_reduction_until"]=world.tick+80
     elif control=="supplies":
-        if not state.get("medicinal_inventory",0):
-            state["treasury"]=round(state["treasury"]+cost,2)
-            return False
         state["medicinal_inventory"]-=1
         patient=min(people,key=lambda p:(p.health,p.id))
         patient.health=min(100,patient.health+5)
@@ -74,6 +89,7 @@ def update_open_thinking(world):
                     p.memory["last_hypothesis_result"]=gain
                     p.memory["last_causal_estimate"]=model["mean_effect"]
                     p.memory["causal_confidence"]=model["confidence"]
+                    p.memory.setdefault("personal_causal_models",{})[pending["control"]+":"+pending["target"]]=dict(model)
                     p.knowledge["research"]=round(min(10,p.knowledge.get("research",0)+.1),3)
                     break
         # Each agent retains an independent question; most curiosity wins a test budget.
