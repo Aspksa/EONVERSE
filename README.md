@@ -117,3 +117,7 @@ Resident grain and timber gathering now requires a natural deposit within nine t
 ## v0.5.3 — Roads, caravans and trade blockades (proposed)
 
 States can jointly fund up to three road improvements. Better roads increase route capacity, reduce transport costs and travel time. Trade consumes shipment capacity; cargos travel over multiple simulation ticks and can incur deterministic losses on dangerous routes. Active bilateral wars and rivalries block new exchanges, while war pauses existing deliveries. Roads, lost cargo and in-transit shipments persist across restarts. The transport layer models abstract caravans rather than rendered moving units or physical route pathfinding.
+
+## v0.5.4 — Visual transport network (proposed)
+
+Capital-to-capital links are now sampled against the terrain grid and classified as land roads, bridges, mountain passes or sea corridors. Modes affect costs and travel times, with pass capacity constraints and extra investment costs. Route snapshots include waypoints. The Three.js viewer draws colored links and cargo vehicles moving along them as shipment ticks advance. This initial implementation uses straight sampled corridors, not full navigable roads, construction of bridge geometry over rivers, working ships on real sea lanes, or vehicle-grade animation and collision detection. These richer systems require pathfinding, ports, and explicit terrain edits in a later release.
