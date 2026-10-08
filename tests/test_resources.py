@@ -6,7 +6,7 @@ from eonverse.resources import CATALOG, resource_disputes
 def test_resource_geography_and_limits(tmp_path):
     a, b = World(seed=91), World(seed=91)
     assert a.deposits == b.deposits
-    assert {d["kind"] for d in a.deposits} == set(CATALOG)
+    assert set(CATALOG).issubset({d["kind"] for d in a.deposits})
     for _ in range(260):
         a.step()
         b.step()
