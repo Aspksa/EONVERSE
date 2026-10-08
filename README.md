@@ -38,3 +38,26 @@ Open http://127.0.0.1:8000/ . For tests: `pip install pytest && python -m pytest
 - v0.5: optional cloud AI for selected strategic decisions, server-side API key storage, budget limits and action validation
 
 **Current limitations:** A proof of concept, not yet a complete evolving civilization. Server restarts reset the state; simulated residents follow local rules, not an LLM.
+
+
+## v0.2.0 — Biomes and navigation (proposed)
+
+A reproducible 65×65 terrain grid creates forest, grassland, beaches, highlands and water based on the world seed. Residents spawn on traversable land, select destinations, and follow four-neighbor BFS routes that avoid impassable water and highland tiles. The browser renders terrain using GPU instancing rather than thousands of separate draw calls.
+
+Tests in `tests/test_terrain.py` cover seeded generation, safe routes and residents remaining on land.
+
+**Next action:** confirm GitHub CI, then merge v0.1.0 first and this v0.2.0 pull request second. Future work: height-aware models, better pathfinding, save/load, dynamic forestry and agent decisions.
+
+## v0.3.0 — Lifecycle, economy and persistence (proposed)
+
+Adds family groups, births, aging and mortality, farm production, simplified resident-to-resident trades, plus automatic local JSON save/load in `data/world.json`. The server saves every 30 simulation ticks and on normal shutdown. No cloud connection is needed. See `tests/test_lifecycle.py` for determinism across restarts.
+
+**Important:** save files are local trusted inputs, not a secure format for files received from other people. This is a prototype: no hereditary traits, actual marriages, markets, or economy-balancing guarantees yet.
+
+## v0.4.1 — Emergent settlements and proto-states (proposed)
+
+Each 50 simulation ticks, construction may trigger the founding of a new settlement if it lies far enough from established settlements. Each settlement starts a proto-state and grows through hamlet/village/town levels depending on buildings and residents. Territory is represented by overlapping influence radii resolved to the nearest capital. Each state accumulates a small local treasury.
+
+This is the first *foundation* for civilization gameplay. Diplomacy, governmental elections, war and complex economic institutions remain future work. Cities and states persist in local JSON snapshots.
+
+**Dependency:** stacked on v0.3.0; resolve and merge earlier PRs with successful CI before promoting to main.
