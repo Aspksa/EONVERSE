@@ -12,6 +12,7 @@ def prepare():
     citizen.x,citizen.z=capital["x"],capital["z"]
     citizen.age=25
     state["treasury"]=100
+    state["medicinal_inventory"]=10
     state.pop("collective_plan",None)
     return world,state,citizen
 
