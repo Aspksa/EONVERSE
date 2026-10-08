@@ -5,10 +5,13 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from dotenv import load_dotenv
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException
+from pydantic import BaseModel, Field
+from urllib.parse import urlsplit
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from eonverse import cloud_ai
 from eonverse.cloud_ai import advise_once, enabled as cloud_ai_enabled
 from eonverse.world import World
 from eonverse.resource_catalog import MATERIAL_CATALOG
@@ -68,6 +71,52 @@ app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 @app.get("/")
 async def home():
     return FileResponse(ROOT / "static" / "index.html")
+
+
+
+
+class CloudSettings(BaseModel):
+    key: str = Field(min_length=8, max_length=4096)
+    model: str = "DeepSeek-V4-Flash"
+
+
+def require_local_admin(request: Request):
+    # Exposed only to browsers directly on the host machine. No remote API key setup.
+    host = request.client.host if request.client else ""
+    if host not in ("127.0.0.1", "::1"):
+        raise HTTPException(403, "Local machine only")
+    hostname = request.url.hostname
+    if hostname not in ("127.0.0.1", "localhost", "::1"):
+        raise HTTPException(403, "Use localhost")
+    origin = request.headers.get("origin", "")
+    parsed = urlsplit(origin)
+    if parsed.scheme != request.url.scheme or parsed.netloc != request.headers.get("host", ""):
+        raise HTTPException(403, "Invalid browser origin")
+    if request.headers.get("X-Eonverse-Local-Settings") != "1":
+        raise HTTPException(403, "Settings confirmation required")
+
+
+@app.get("/api/local/cloud/status")
+async def cloud_status(request: Request):
+    require_local_admin(request)
+    return cloud_ai.status()
+
+
+@app.post("/api/local/cloud/configure")
+async def configure_cloud(request: Request, settings: CloudSettings):
+    require_local_admin(request)
+    try:
+        cloud_ai.configure(settings.key, settings.model)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    return cloud_ai.status()
+
+
+@app.post("/api/local/cloud/disconnect")
+async def disconnect_cloud(request: Request):
+    require_local_admin(request)
+    cloud_ai.disconnect()
+    return cloud_ai.status()
 
 
 @app.get("/api/resources/catalog")
