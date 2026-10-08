@@ -7,7 +7,7 @@ def test_lifecycle_economy_and_save(tmp_path):
     for _ in range(180):
         original.step()
     assert original.farms
-    assert original.births >= 2
+    assert original.births >= 1  # Finite food now makes birth count resource-dependent.
     assert original.trades >= 0
     assert all(r.family_id > 0 for r in original.residents)
     target = tmp_path / "universe.json"

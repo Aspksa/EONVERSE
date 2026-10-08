@@ -35,9 +35,17 @@ def test_resource_trade_transfers_not_creates_stock():
     a["treasury"] = 100
     b["treasury"] = 0
     world.relations[(a["id"], b["id"])] = {"status": "neutral"}
+    world.settlements[1]["x"] = world.settlements[0]["x"] + 5
+    world.settlements[1]["z"] = world.settlements[0]["z"]
     total = a["treasury"] + b["treasury"]
     world.tick = 280
     update_resource_trade(world)
+    assert world.shipments
+    assert a["resource_inventory"]["iron"] == 0
+    assert sum(s["units"] for s in world.shipments if s["kind"] == "iron") + b["resource_inventory"]["iron"] == 20
+    assert a["treasury"] + b["treasury"] <= total
+    from eonverse.logistics import update_shipments
+    for tick in (290, 300, 310):
+        world.tick = tick
+        update_shipments(world)
     assert a["resource_inventory"]["iron"] > 0
-    assert a["resource_inventory"]["iron"] + b["resource_inventory"]["iron"] == 20
-    assert a["treasury"] + b["treasury"] == total

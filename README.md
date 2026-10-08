@@ -109,3 +109,7 @@ This is a prototype, not yet a detailed ecology, real caravans, staffed expediti
 ## v0.5.1 — Finite household harvesting (proposed)
 
 Legacy resident foraging and logging, together with basic farm output, now transfer quantities from the world's finite/regrowing grain and timber deposits instead of creating those resources without a source. If deposits are exhausted, these sources produce nothing. The underlying state extraction model continues to use the same deposits. Food/wood accounting is a first integration step; downstream economic demand, regional reachability and water dependency will need later refinement.
+
+## v0.5.2 — Territorial logistics (proposed)
+
+Resident grain and timber gathering now requires a natural deposit within nine terrain units; individual farms harvest only their local surroundings. Inter-state resource deals require capitals within 36 world units, consume funds for distance-based transport, respect a 500-unit receiving warehouse limit, and create shipments delivered over several simulation ticks. In-transit cargo persists across saves. The warehouse is represented by the existing state inventory and is an abstract capacity, not a separate 3D building yet. State mine output remains direct-to-inventory and does not yet have physical transport, caravans, or route hazards.

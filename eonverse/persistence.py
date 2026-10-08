@@ -28,6 +28,8 @@ def load_world(path):
     world.buildings = data["buildings"]
     world.deposits = data.get("deposits", world.deposits)
     world.resource_trades = int(data.get("resource_trades", 0))
+    world.shipments = data.get("shipments", [])
+    world.delivered_shipments = int(data.get("delivered_shipments", 0))
     world.farms = data.get("farms", [])
     world.food_supply = float(data["resources"]["food"])
     world.wood_supply = float(data["resources"]["wood"])
