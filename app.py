@@ -8,6 +8,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from eonverse.cloud_ai import advise_once, enabled as cloud_ai_enabled
 from eonverse.world import World
 from eonverse.resource_catalog import MATERIAL_CATALOG
 from eonverse.persistence import load_world, save_world
@@ -21,13 +22,19 @@ except (OSError, ValueError, KeyError, TypeError) as exc:
 clients: set[WebSocket] = set()
 MAX_CLIENTS = 64
 logger = logging.getLogger(__name__)
+MAX_CLOUD_REQUESTS_PER_SESSION = 60
 
 
 async def universe_loop():
+    cloud_requests = 0
     while True:
         await asyncio.sleep(1)
         try:
             world.step()
+            if (cloud_ai_enabled() and cloud_requests < MAX_CLOUD_REQUESTS_PER_SESSION
+                    and world.tick % 120 == 0):
+                cloud_requests += 1
+                asyncio.create_task(advise_once(world))
             if world.tick % 30 == 0:
                 save_world(world, SAVE_PATH)
             snapshot = world.snapshot()
