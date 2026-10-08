@@ -6,6 +6,7 @@ import random
 from dataclasses import dataclass, field
 from .terrain import Terrain
 from .civilization import update_civilizations
+from .politics import update_politics
 
 
 @dataclass
@@ -132,6 +133,7 @@ class World:
         if not self.residents:
             self.spawn()
         update_civilizations(self)
+        update_politics(self)
         self.history = self.history[-30:]
 
     def snapshot(self):
