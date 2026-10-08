@@ -31,6 +31,7 @@ from .experiments import update_experiments, inherit_knowledge
 from .culture import update_culture
 from .mechanics import update_mechanics
 from .research_evolution import update_research_evolution
+from .ecology import update_ecology
 from .science import update_science
 from .medicine import seed_herbs, update_medicine, teach_medicine
 from .public_health import update_public_health
@@ -97,6 +98,10 @@ class World:
     communities: list[dict] = field(default_factory=list)
     associations: list[dict] = field(default_factory=list)
     herb_patches: list[dict] = field(default_factory=list)
+    organisms: list[dict] = field(default_factory=list)
+    ecology_soil: dict = field(default_factory=dict)
+    next_organism_id: int = 1
+    civilization_epochs: list[dict] = field(default_factory=list)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -204,6 +209,7 @@ class World:
         update_warfare(self)
         update_revolutions(self)
         update_resources(self)
+        update_ecology(self)
         update_roads(self)
         update_infrastructure(self)
         update_resource_trade(self)
@@ -247,6 +253,10 @@ class World:
             "communities": [dict(id=g["id"], members=g["members"][:]) for g in self.communities],
             "associations": [dict(g) for g in self.associations],
             "herb_patches": [h.copy() for h in self.herb_patches],
+            "organisms": [dict(o) for o in self.organisms],
+            "ecology_soil": self.ecology_soil.copy(),
+            "next_organism_id": self.next_organism_id,
+            "civilization_epochs": [dict(x) for x in self.civilization_epochs],
             "trade_routes": [{"from": a, "to": b, "transactions": count} for (a,b),count in sorted(self.trade_routes.items())],
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
