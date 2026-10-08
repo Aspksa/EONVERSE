@@ -50,3 +50,27 @@ def classify_path(terrain, path):
     mountains = sum(b == "highland" for b in biomes)
     return ("sea" if water >= 8 else "bridge" if water else
             "pass" if mountains >= 5 else "road")
+
+def find_sea_lane(terrain, coast_a, coast_b):
+    """Water-only shipping channel between coastal port entrances."""
+    from collections import deque
+    start=(coast_a["water_x"], coast_a["water_z"])
+    goal=(coast_b["water_x"], coast_b["water_z"])
+    if biome_at(terrain,*start)!="water" or biome_at(terrain,*goal)!="water":
+        return []
+    previous={start:None}
+    queue=deque([start])
+    while queue:
+        x,z=queue.popleft()
+        if (x,z)==goal:
+            result=[]
+            current=goal
+            while current is not None:
+                result.append(current)
+                current=previous[current]
+            return result[::-1]
+        for nxt in ((x+1,z),(x-1,z),(x,z+1),(x,z-1)):
+            if nxt not in previous and biome_at(terrain,*nxt)=="water":
+                previous[nxt]=(x,z)
+                queue.append(nxt)
+    return []

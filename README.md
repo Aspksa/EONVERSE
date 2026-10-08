@@ -129,3 +129,7 @@ Trade corridors now use weighted grid search instead of straight interpolated li
 ## v0.5.6 — Built transport infrastructure (proposed)
 
 Routes require separately funded built assets. States share construction costs for roads, passes, bridge links and port links; condition depreciates in 50-tick cycles, with paid maintenance if affordable. Transport capacity and cost depend on condition, and shipping requires an operational link. JSON saves persist asset condition and investment totals. Basic bridge/port markers appear in the Three.js view. This is abstract per-corridor construction; tile-by-tile roads, harbor berths and navigable shipping remain future work.
+
+## v0.5.7 — Constructed road cells and maritime lanes (proposed)
+
+Paid land corridors are exposed as road tiles and shown as 3D paving. Coastal access searches nearby land-water boundaries; sea routes require a continuous water-only channel between port approaches and are preferred when competitive with a land route. The viewer marks funded coastal ports and uses ship-shaped cargo objects on maritime corridors. Shipments inherit existing travel-time, cargo, risk and blockade rules. These are lightweight 3D proxies and straight coastal transfer segments, not yet ship physics, harbor construction per tile, or dedicated fleets.

@@ -17,6 +17,7 @@ from .industry import update_industry
 from .logistics import update_shipments
 from .transport import update_roads, infrastructure_snapshot
 from .infrastructure import update_infrastructure
+from .road_grid import built_road_tiles, ports_snapshot
 
 
 @dataclass
@@ -211,6 +212,8 @@ class World:
             "lost_shipments": self.lost_shipments,
             "roads": infrastructure_snapshot(self),
             "infrastructure": [{"from": a, "to": b, **asset.copy()} for (a,b),asset in sorted(self.infrastructure.items())],
+            "road_tiles": built_road_tiles(self),
+            "ports": ports_snapshot(self),
             "resource_disputes": resource_disputes(self),
             "history": self.history.copy(),
             "chronicle": self.chronicle.copy(),
