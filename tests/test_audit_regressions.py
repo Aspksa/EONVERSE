@@ -89,3 +89,36 @@ def test_corrupt_save_rejects_negative_and_nan_resources(tmp_path):
         path.write_text(json.dumps(data), encoding="utf-8")
         with pytest.raises(ValueError):
             load_world(path)
+
+
+def test_federation_preserves_material_inventory():
+    from eonverse.revolutions import update_revolutions
+    world = World(42)
+    world.tick = 400
+    world.settlements = [
+        {"id": 1, "name": "A", "x": 0, "z": 0, "population": 5,
+         "houses": 2, "territory_radius": 8, "state_id": 1},
+        {"id": 2, "name": "B", "x": 5, "z": 0, "population": 5,
+         "houses": 2, "territory_radius": 8, "state_id": 2},
+    ]
+    a = {"id": 1, "name": "A", "capital_id": 1, "treasury": 40,
+         "stability": 95, "food_stock": 20, "resource_inventory": {"iron": 2}}
+    b = {"id": 2, "name": "B", "capital_id": 2, "treasury": 40,
+         "stability": 95, "food_stock": 20, "resource_inventory": {"iron": 7}}
+    world.states = [a, b]
+    world.relations = {(1, 2): {"status": "alliance", "trust": 90}}
+    world.wars = {}
+    update_revolutions(world)
+    assert b["dissolved"]
+    assert a["resource_inventory"]["iron"] == 9
+    assert b["resource_inventory"] == {}
+
+
+def test_civilization_update_does_not_mint_taxes():
+    from eonverse.civilization import update_civilizations
+    world = World(42)
+    state, _ = _state(world)
+    world.tick = 25
+    before = state["treasury"]
+    update_civilizations(world)
+    assert state["treasury"] == before
