@@ -20,7 +20,7 @@ def update_industry(world):
         state.setdefault("processed_total", 0)
         # Each expedition reveals ONE otherwise unknown deposit with a territorial claim.
         unseen = sorted((d for d in world.deposits
-                         if territorial_owner(world, d["x"], d["z"]) == state["id"]
+                         if (d.get("controller_state_id") or territorial_owner(world, d["x"], d["z"])) == state["id"]
                          and state["id"] not in d.get("discovered_by", [])),
                         key=lambda d: d["id"])
         if unseen and state.get("treasury", 0) >= 8:
