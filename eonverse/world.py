@@ -174,7 +174,7 @@ class World:
             self.history.append(f"Day {self.tick}: a new farm was planted")
         if self.tick % 15 == 0 and len(self.residents) > 1:
             buyer, seller = self.rng.sample(self.residents, 2)
-            if buyer.coins >= 1 and seller.food >= 6:
+            if buyer.coins >= 1 and seller.food >= 6 and buyer.food <= 95:
                 buyer.coins -= 1
                 seller.coins += 1
                 buyer.food = min(100, buyer.food + 5)
@@ -185,7 +185,9 @@ class World:
             location = self.residents[self.rng.randrange(len(self.residents))]
             self.buildings.append({"id": len(self.buildings) + 1, "x": location.x, "z": location.z})
             self.history.append(f"Day {self.tick}: settlers built house #{len(self.buildings)}")
-        if self.tick % 80 == 0 and self.residents and self.food_supply >= 30 and len(self.residents) < 120:
+        if (self.tick % 80 == 0 and self.residents and self.food_supply >= 30
+                and len(self.residents) < 120
+                and any(p.age >= 18 and p.health >= 50 and p.food >= 30 for p in self.residents)):
             self.food_supply -= 30
             newcomer = self.spawn()
             newcomer.age = 0
