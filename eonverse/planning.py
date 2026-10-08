@@ -42,7 +42,7 @@ def propose_plan(world, state, person, measurements):
 def update_planning(world):
     if world.tick%40:return
     for state in sorted((s for s in world.states if not s.get("dissolved")),key=lambda s:s["id"]):
-        people=sorted([p for p in world.residents if territorial_owner(world,p.x,p.z)==s["id"]],
+        people=sorted([p for p in world.residents if territorial_owner(world,p.x,p.z)==state["id"]],
                       key=lambda p:p.id)
         adults=[p for p in people if p.age>=16]
         if not adults:continue
