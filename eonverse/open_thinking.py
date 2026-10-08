@@ -4,6 +4,7 @@ Composes observed dimensions and generic controllable world variables rather
 than prescribing an institutional or medical solution. Not an unrestricted LLM.
 """
 from .civilization import territorial_owner
+from .causal_memory import record_evidence, choose_control
 
 OBSERVABLES=("health","hygiene","food","energy")
 CONTROLS=("sanitation","contact_reduction","supplies","research")
@@ -65,11 +66,14 @@ def update_open_thinking(world):
             end=data.get(pending["target"],0)
             gain=round(end-pending["baseline"],3)
             pending.update({"result":gain,"status":"tested","tested_at":world.tick})
+            model=record_evidence(state,pending,end,world.tick)
             history.append(pending)
             del history[:-MAX_HYPOTHESES]
             for p in people:
                 if p.id==pending["proposer_id"]:
                     p.memory["last_hypothesis_result"]=gain
+                    p.memory["last_causal_estimate"]=model["mean_effect"]
+                    p.memory["causal_confidence"]=model["confidence"]
                     p.knowledge["research"]=round(min(10,p.knowledge.get("research",0)+.1),3)
                     break
         # Each agent retains an independent question; most curiosity wins a test budget.
@@ -81,7 +85,11 @@ def update_open_thinking(world):
                 ideas.append((p.personality.get("curiosity",.5),-p.id,question))
         if not ideas:continue
         idea=max(ideas)[2]
+        idea["control"]=choose_control(idea["target"],state.get("causal_models",{}),CONTROLS,idea["proposer_id"])
         if apply_probe(world,state,people,idea["control"]):
-            idea.update({"baseline":data[idea["target"]],"created_at":world.tick,"status":"testing"})
+            recent=[h for h in history[-8:] if h.get("target")==idea["target"]]
+            trend=round(sum(h.get("result",0) for h in recent)/len(recent),3) if recent else 0
+            idea.update({"baseline":data[idea["target"]],"control_trend":trend,
+                         "created_at":world.tick,"status":"testing"})
             state["pending_hypothesis"]=idea
             world.history.append(f"Day {world.tick}: resident #{idea['proposer_id']} began testing a question")

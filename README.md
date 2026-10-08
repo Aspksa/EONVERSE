@@ -169,3 +169,7 @@ No automatic public health institution construction or mandatory sanitation spen
 ## v0.6.8 — Open questions and experiments (proposed)
 
 Each adult resident can formulate measurable questions by combining observed shortfalls (health, hygiene, nutrition, energy) with generic controllable dimensions (environment, contact, supplies, investigation). A curious resident can fund an intervention and compare delayed outcomes, retaining evidence, experience and the question across save/reload. No hospital or quarantine objective is assigned to residents. The available variables and interventions remain simulator-defined; this is bounded generative hypothesis search, not unrestricted reasoning, language-model thought or causally controlled science.
+
+## v0.6.9 — Causal memory (proposed)
+
+Residents now aggregate evidence across repeated experiments per intervention and observation, store a provisional effect estimate, uncertainty, and bounded confidence, and reserve opportunities to explore untested controls. A simple historical trend is subtracted as an approximate baseline to avoid equating every observed change with an intervention. These estimates are **not proof of causality**: rigorous matched controls and confounder modeling are later work. State evidence and individual learning survive save/reload.
