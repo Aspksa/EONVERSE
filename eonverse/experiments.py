@@ -48,7 +48,6 @@ def update_experiments(world):
             materials[material] = materials.get(material,0) + amount
         funding = 6
         if any(stock.get(k,0)<n for k,n in materials.items()) or state.get("treasury",0)<funding:
-            return_value = None
             continue
         for material, amount in materials.items():
             stock[material] -= amount
