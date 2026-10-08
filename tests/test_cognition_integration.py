@@ -11,6 +11,8 @@ def test_preference_changes_daily_choice():
     person.food = person.energy = 90
     world.food_supply = 100
     world.wood_supply = 85
+    # Isolate the utility choice from terrain reachability in this unit test.
+    world.terrain.walkable = lambda x, z: True
     world.deposits = [
         {"id": 1, "kind": "grain", "x": 2, "z": 0, "remaining": 100},
         {"id": 2, "kind": "timber", "x": 0, "z": 2, "remaining": 100},
