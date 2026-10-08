@@ -201,3 +201,7 @@ Voluntary associations now negotiate generic contribution rules by majority base
 ## v0.7.8–v0.8.0 — Culture and abstract mechanics
 
 Repeated voluntary group practices can become stable customs without preset ceremonial templates. Researchers test combinations of two to four existing physical principles and spend real inventory and treasury funds. An abstract deterministic mechanics model evaluates output, energy loss and stress; good combinations are archived. This is intentionally **not** a true rigid-body physics engine or unbounded generative invention system. Tests cover composition, material conservation, culture and save/replay.
+
+## v0.8.1–v0.8.3 — Technological refinement and research divergence
+
+Successful and unsuccessful mechanical trials may be refined through repeated paid generations, with tracked performance, attempts and material consumption. Trusted researchers form bounded research groups and share expertise. Each state's research archive and resource availability determine its trajectory, allowing different local technology portfolios without fixed historical eras or named inventions. The mechanical model is abstract and deterministic, not a full engineering solver; technical and scientific freedom remains limited to the existing simulation primitives.
