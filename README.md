@@ -193,3 +193,7 @@ Residents accumulate bounded personal beliefs about interventions, preferences o
 ## v0.7.4 — Voluntary cooperation
 
 Nearby adults may form goal-aligned associations when both parties trust each other and agree on the most urgent personal need. Members receive simple responsibilities based on demonstrated research experience; groups dissolve when proximity, trust or shared purpose disappears. Associations and members' memories persist across saves. This is an early, bounded association mechanism rather than emergent arbitrary institutions, collective negotiation or autonomous new action primitives.
+
+## v0.7.5–v0.7.7 — Negotiated cooperation (proposed)
+
+Voluntary associations now negotiate generic contribution rules by majority based on members' circumstances, interests and ability to pay. Contributed coins move into bounded group pools without creating money. Associations preserve agreements and stability across world ticks, evaluate changing member conditions and track cooperative or competitive relations among groups that share a need. No specific civic or medical institution is unlocked by these rules: persistence denotes an abstract association, not an automatic clinic or government. Rules remain constrained to a generic contribution vocabulary, not unconstrained language or institution invention.
