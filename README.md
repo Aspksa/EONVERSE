@@ -165,3 +165,7 @@ Fictional health simulation includes personal hygiene, funded municipal sanitati
 ## v0.6.7 — Emergent intervention discovery (proposed)
 
 No automatic public health institution construction or mandatory sanitation spending. Adult inhabitants experiment with generic environmental affordances, compare delayed changes in health and hygiene, keep evidence and reuse practices with more promising results. Local experiment observations persist in each state's save data. The simulator still defines the primitive actions and simplified outcome model: it does **not** spontaneously invent unconstrained institutions, language, tools or biological remedies. An open-ended compositional action planner and social institution formation are future extensions.
+
+## v0.6.8 — Open questions and experiments (proposed)
+
+Each adult resident can formulate measurable questions by combining observed shortfalls (health, hygiene, nutrition, energy) with generic controllable dimensions (environment, contact, supplies, investigation). A curious resident can fund an intervention and compare delayed outcomes, retaining evidence, experience and the question across save/reload. No hospital or quarantine objective is assigned to residents. The available variables and interventions remain simulator-defined; this is bounded generative hypothesis search, not unrestricted reasoning, language-model thought or causally controlled science.

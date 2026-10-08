@@ -28,6 +28,7 @@ from .science import update_science
 from .medicine import seed_herbs, update_medicine, teach_medicine
 from .public_health import update_public_health
 from .emergent_discovery import update_discoveries
+from .open_thinking import update_open_thinking
 from .tech_generations import update_technology_generations
 
 
@@ -206,6 +207,7 @@ class World:
         update_medicine(self)
         update_public_health(self)
         update_discoveries(self)
+        update_open_thinking(self)
         update_technology_generations(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
