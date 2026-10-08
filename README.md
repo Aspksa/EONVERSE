@@ -173,3 +173,7 @@ Each adult resident can formulate measurable questions by combining observed sho
 ## v0.6.9 — Causal memory (proposed)
 
 Residents now aggregate evidence across repeated experiments per intervention and observation, store a provisional effect estimate, uncertainty, and bounded confidence, and reserve opportunities to explore untested controls. A simple historical trend is subtracted as an approximate baseline to avoid equating every observed change with an intervention. These estimates are **not proof of causality**: rigorous matched controls and confounder modeling are later work. State evidence and individual learning survive save/reload.
+
+## v0.7.0 — Long-horizon resident planning (proposed)
+
+Adult inhabitants compose up to three financed actions based on observed shortfalls and uncertain causal experience. Plans persist over multiple simulation ticks, enlist trusted supporters, compare observed outcomes and revise when failures accumulate. Plans and outcomes persist in state history and individual memory. This is bounded, evidence-driven planning over generic world controls — not unrestricted agent autonomy or a prescribed path to particular institutions.
