@@ -11,6 +11,7 @@ from .economy import update_economy
 from .diplomacy import update_diplomacy
 from .warfare import update_warfare
 from .revolutions import update_revolutions
+from .resources import create_deposits, update_resources, resource_disputes
 
 
 @dataclass
@@ -49,10 +50,13 @@ class World:
     trade_routes: dict[tuple[int, int], int] = field(default_factory=dict)
     relations: dict[tuple[int, int], dict] = field(default_factory=dict)
     wars: dict[tuple[int, int], dict] = field(default_factory=dict)
+    deposits: list[dict] = field(default_factory=list)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
         self.terrain = Terrain(self.seed)
+        if not self.deposits:
+            self.deposits = create_deposits(self.seed, self.terrain)
         if not self.residents:
             for _ in range(12):
                 self.spawn()
@@ -147,6 +151,7 @@ class World:
         update_diplomacy(self)
         update_warfare(self)
         update_revolutions(self)
+        update_resources(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
         self.chronicle = self.chronicle[-500:]
@@ -168,6 +173,8 @@ class World:
             "trade_routes": [{"from": a, "to": b, "transactions": count} for (a,b),count in sorted(self.trade_routes.items())],
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
+            "deposits": [d.copy() for d in self.deposits],
+            "resource_disputes": resource_disputes(self),
             "history": self.history.copy(),
             "chronicle": self.chronicle.copy(),
         }
