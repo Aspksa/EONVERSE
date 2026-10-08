@@ -137,3 +137,7 @@ Paid land corridors are exposed as road tiles and shown as 3D paving. Coastal ac
 ## v0.6.0 — Resident Cognitive Foundation (proposed)
 
 Each inhabitant has a deterministic utility-based brain. Needs drive eating and resting, while resource scarcity drives deliberate gathering. Agents remember the last resource and deposit target and navigate existing terrain routes instead of randomly harvesting from an arbitrary location. Goals and individual memory are persisted with residents, and tests check deterministic replay. This is rule-based simulated agency, not a conscious entity, not an external LLM, and not yet social learning, interpersonal relationships or dialogue.
+
+## v0.6.1 — Personality & Social Foundation (proposed)
+
+Each inhabitant receives stable, seeded curiosity, sociability, caution and ambition scores. Nearby residents develop or weaken mutual trust, with shared families producing stronger bonds. Up to 24 known contacts are retained per resident. Their traits and social links are stored as part of resident JSON save data. This is a lightweight social simulation, not dialogue, LLM cognition or fully realized institutions.
