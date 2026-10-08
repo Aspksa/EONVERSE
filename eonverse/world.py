@@ -10,6 +10,7 @@ from .politics import update_politics
 from .economy import update_economy
 from .diplomacy import update_diplomacy
 from .warfare import update_warfare
+from .revolutions import update_revolutions
 
 
 @dataclass
@@ -143,6 +144,7 @@ class World:
         update_economy(self)
         update_diplomacy(self)
         update_warfare(self)
+        update_revolutions(self)
         self.history = self.history[-30:]
 
     def snapshot(self):
