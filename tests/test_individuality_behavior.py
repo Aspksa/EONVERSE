@@ -13,8 +13,8 @@ def test_beliefs_preferences_and_habits_change_selected_work():
     # Equal distances remove terrain/placement as a confounding variable.
     person.x = person.z = 0
     world.deposits = [
-        {"id": 1, "kind": "grain", "x": 1, "z": 0, "remaining": 50},
-        {"id": 2, "kind": "timber", "x": 0, "z": 1, "remaining": 50},
+        {"id": 1, "kind": "grain", "x": 0, "z": 0, "remaining": 50},
+        {"id": 2, "kind": "timber", "x": 0, "z": 0, "remaining": 50},
     ]
     person.memory = {
         "preferences": {"food": .95, "energy": .05},
