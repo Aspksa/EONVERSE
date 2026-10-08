@@ -16,6 +16,7 @@ from .resource_market import update_resource_trade
 from .industry import update_industry
 from .logistics import update_shipments
 from .transport import update_roads, infrastructure_snapshot
+from .infrastructure import update_infrastructure
 
 
 @dataclass
@@ -60,6 +61,7 @@ class World:
     delivered_shipments: int = 0
     roads: dict[tuple[int, int], int] = field(default_factory=dict)
     lost_shipments: int = 0
+    infrastructure: dict[tuple[int, int], dict] = field(default_factory=dict)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -177,6 +179,7 @@ class World:
         update_revolutions(self)
         update_resources(self)
         update_roads(self)
+        update_infrastructure(self)
         update_resource_trade(self)
         update_shipments(self)
         update_industry(self)
@@ -207,6 +210,7 @@ class World:
             "delivered_shipments": self.delivered_shipments,
             "lost_shipments": self.lost_shipments,
             "roads": infrastructure_snapshot(self),
+            "infrastructure": [{"from": a, "to": b, **asset.copy()} for (a,b),asset in sorted(self.infrastructure.items())],
             "resource_disputes": resource_disputes(self),
             "history": self.history.copy(),
             "chronicle": self.chronicle.copy(),

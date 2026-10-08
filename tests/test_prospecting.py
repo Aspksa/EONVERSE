@@ -37,6 +37,8 @@ def test_resource_trade_transfers_not_creates_stock():
     world.relations[(a["id"], b["id"])] = {"status": "neutral"}
     world.settlements[1]["x"] = world.settlements[0]["x"] + 5
     world.settlements[1]["z"] = world.settlements[0]["z"]
+    key=(a["id"], b["id"])
+    world.infrastructure[key]={"kind":"road","condition":100,"spent":16,"bridges":0,"ports":0}
     total = a["treasury"] + b["treasury"]
     world.tick = 280
     update_resource_trade(world)

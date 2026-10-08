@@ -18,7 +18,7 @@ def update_resource_trade(world):
         if world.relations.get(pair, {}).get("status") in ("rivalry",):
             continue
         route = route_status(world, a, b)
-        if route is None or route["blocked"]:
+        if route is None or route["blocked"] or not route["built"]:
             continue
         distance = route["distance"]
         for buyer, seller in ((a, b), (b, a)):

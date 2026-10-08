@@ -15,6 +15,7 @@ def test_road_upgrade_and_blockade(tmp_path):
     world.roads.pop(key, None)
     world.relations[key] = {"trust": 70, "status": "neutral"}
     a["treasury"] = b["treasury"] = 150
+    world.infrastructure[key] = {"kind":"road","condition":100,"spent":16,"bridges":0,"ports":0}
     world.tick = 300
     update_roads(world)
     improved = route_status(world, a, b)

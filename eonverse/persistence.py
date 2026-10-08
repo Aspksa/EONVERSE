@@ -32,6 +32,7 @@ def load_world(path):
     world.delivered_shipments = int(data.get("delivered_shipments", 0))
     world.lost_shipments = int(data.get("lost_shipments", 0))
     world.roads = {(item["from"], item["to"]): int(item["road_level"]) for item in data.get("roads", []) if item.get("road_level", 0) > 0}
+    world.infrastructure = {(item["from"], item["to"]): {k:v for k,v in item.items() if k not in ("from","to")} for item in data.get("infrastructure", [])}
     world.farms = data.get("farms", [])
     world.food_supply = float(data["resources"]["food"])
     world.wood_supply = float(data["resources"]["wood"])
