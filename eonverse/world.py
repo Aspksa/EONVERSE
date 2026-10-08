@@ -12,6 +12,7 @@ from .diplomacy import update_diplomacy
 from .warfare import update_warfare
 from .revolutions import update_revolutions
 from .resources import create_deposits, update_resources, resource_disputes
+from .resource_market import update_resource_trade
 
 
 @dataclass
@@ -51,6 +52,7 @@ class World:
     relations: dict[tuple[int, int], dict] = field(default_factory=dict)
     wars: dict[tuple[int, int], dict] = field(default_factory=dict)
     deposits: list[dict] = field(default_factory=list)
+    resource_trades: int = 0
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -152,6 +154,7 @@ class World:
         update_warfare(self)
         update_revolutions(self)
         update_resources(self)
+        update_resource_trade(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
         self.chronicle = self.chronicle[-500:]
@@ -174,6 +177,7 @@ class World:
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
             "deposits": [d.copy() for d in self.deposits],
+            "resource_trades": self.resource_trades,
             "resource_disputes": resource_disputes(self),
             "history": self.history.copy(),
             "chronicle": self.chronicle.copy(),
