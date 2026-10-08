@@ -237,6 +237,7 @@ class World:
             "settlements": [c.copy() for c in self.settlements],
             "states": [c.copy() for c in self.states],
             "communities": [dict(id=g["id"], members=g["members"][:]) for g in self.communities],
+            "associations": [dict(g) for g in self.associations],
             "herb_patches": [h.copy() for h in self.herb_patches],
             "trade_routes": [{"from": a, "to": b, "transactions": count} for (a,b),count in sorted(self.trade_routes.items())],
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
