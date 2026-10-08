@@ -60,9 +60,10 @@ def update_ecology(world):
             old=world.ecology_soil.get(key,.65)
             delta=.025 if organism["kind"]=="producer" else -.018
             world.ecology_soil[key]=round(max(.1,min(.95,old+delta)),3)
+        from .civilization import territorial_owner
         for state in world.states:
             record={"tick":world.tick,"state_id":state["id"],"dissolved":bool(state.get("dissolved")),
-                    "population":sum(1 for p in world.residents),
-                    "organizations":len(world.associations)}
+                    "population":sum(1 for p in world.residents if territorial_owner(world,p.x,p.z)==state["id"]),
+                    "organizations":len([a for a in world.associations if any(territorial_owner(world,p.x,p.z)==state["id"] for p in world.residents if p.id in a["members"])])}
             world.civilization_epochs.append(record)
         del world.civilization_epochs[:-MAX_EVENTS]
