@@ -35,5 +35,7 @@ def load_world(path):
     world.births = int(stats.get("births", 0))
     world.deaths = int(stats.get("deaths", 0))
     world.trades = int(data.get("trades", 0))
+    world.settlements = data.get("settlements", [])
+    world.states = data.get("states", [])
     world.rng.setstate(_tuple_tree(data["rng_state"]))
     return world

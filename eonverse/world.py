@@ -5,6 +5,7 @@ import math
 import random
 from dataclasses import dataclass, field
 from .terrain import Terrain
+from .civilization import update_civilizations
 
 
 @dataclass
@@ -37,6 +38,8 @@ class World:
     births: int = 0
     deaths: int = 0
     trades: int = 0
+    settlements: list[dict] = field(default_factory=list)
+    states: list[dict] = field(default_factory=list)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -128,6 +131,7 @@ class World:
         self.residents = survivors
         if not self.residents:
             self.spawn()
+        update_civilizations(self)
         self.history = self.history[-30:]
 
     def snapshot(self):
@@ -141,5 +145,7 @@ class World:
             "farms": [f.copy() for f in self.farms],
             "demographics": {"births": self.births, "deaths": self.deaths, "families": len({p.family_id for p in self.residents})},
             "trades": self.trades,
+            "settlements": [c.copy() for c in self.settlements],
+            "states": [c.copy() for c in self.states],
             "history": self.history.copy(),
         }
