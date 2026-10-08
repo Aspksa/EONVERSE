@@ -21,6 +21,7 @@ from .road_grid import built_road_tiles, ports_snapshot
 from .cognition import think, act
 from .social import personality, update_social
 from .idea_exchange import update_idea_exchange
+from .individuality import update_individuality
 from .society import update_society
 from .civic import update_civic
 from .inventions import update_inventions
@@ -211,6 +212,7 @@ class World:
         update_discoveries(self)
         update_open_thinking(self)
         update_idea_exchange(self)
+        update_individuality(self)
         update_planning(self)
         update_technology_generations(self)
         additions = self.history[len(old_history):]
