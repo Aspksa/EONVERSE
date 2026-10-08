@@ -19,6 +19,7 @@ from .transport import update_roads, infrastructure_snapshot
 from .infrastructure import update_infrastructure
 from .road_grid import built_road_tiles, ports_snapshot
 from .cognition import think, act
+from .social import personality, update_social
 
 
 @dataclass
@@ -37,6 +38,8 @@ class Resident:
     coins: float = 5.0
     goal: str = 'explore'
     memory: dict = field(default_factory=dict)
+    personality: dict = field(default_factory=dict)
+    relationships: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -81,6 +84,7 @@ class World:
         x, z = self.rng.choice(positions)
         resident = Resident(id=self.next_id, x=x, z=z, age=self.rng.uniform(18, 38), family_id=(self.next_id - 1) // 3 + 1)
         self.next_id += 1
+        resident.personality = personality(self.seed, resident.id)
         self.residents.append(resident)
         return resident
 
@@ -159,6 +163,7 @@ class World:
         self.residents = survivors
         if not self.residents:
             self.spawn()
+        update_social(self)
         update_civilizations(self)
         update_politics(self)
         update_economy(self)
