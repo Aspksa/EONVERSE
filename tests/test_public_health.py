@@ -9,6 +9,8 @@ def test_hygiene_and_public_sanitation_have_budget_cost():
     for _ in range(240):
         world.step()
     state = world.states[0]
+    capital = next(c for c in world.settlements if c["id"] == state["capital_id"])
+    world.residents[0].x, world.residents[0].z = capital["x"], capital["z"]
     state["treasury"] = 0
     state["sanitation"] = 50
     world.tick = 260
@@ -25,6 +27,8 @@ def test_hospital_requires_school_and_funding():
     for _ in range(240):
         world.step()
     state = world.states[0]
+    capital = next(c for c in world.settlements if c["id"] == state["capital_id"])
+    world.residents[0].x, world.residents[0].z = capital["x"], capital["z"]
     state["hospital"] = False
     state["institutions"] = []
     state["treasury"] = 100
