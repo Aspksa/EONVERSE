@@ -20,6 +20,7 @@ from .infrastructure import update_infrastructure
 from .road_grid import built_road_tiles, ports_snapshot
 from .cognition import think, act
 from .social import personality, update_social
+from .society import update_society
 
 
 @dataclass
@@ -40,6 +41,10 @@ class Resident:
     memory: dict = field(default_factory=dict)
     personality: dict = field(default_factory=dict)
     relationships: dict = field(default_factory=dict)
+    profession: str = 'unassigned'
+    knowledge: dict = field(default_factory=dict)
+    long_term_plan: str = 'explore'
+    community_id: int | None = None
 
 
 @dataclass
@@ -69,6 +74,7 @@ class World:
     roads: dict[tuple[int, int], int] = field(default_factory=dict)
     lost_shipments: int = 0
     infrastructure: dict[tuple[int, int], dict] = field(default_factory=dict)
+    communities: list[dict] = field(default_factory=list)
 
     def __post_init__(self):
         self.rng = random.Random(self.seed)
@@ -166,6 +172,7 @@ class World:
         update_social(self)
         update_civilizations(self)
         update_politics(self)
+        update_society(self)
         update_economy(self)
         update_diplomacy(self)
         update_warfare(self)
@@ -194,6 +201,7 @@ class World:
             "trades": self.trades,
             "settlements": [c.copy() for c in self.settlements],
             "states": [c.copy() for c in self.states],
+            "communities": [dict(id=g["id"], members=g["members"][:]) for g in self.communities],
             "trade_routes": [{"from": a, "to": b, "transactions": count} for (a,b),count in sorted(self.trade_routes.items())],
             "relations": [{"from": a, "to": b, **r.copy()} for (a,b),r in sorted(self.relations.items())],
             "wars": [{"from": a, "to": b, **war.copy()} for (a,b),war in sorted(self.wars.items())],
