@@ -4,7 +4,7 @@ from eonverse.tech_generations import update_technology_generations
 from eonverse.persistence import save_world, load_world
 
 
-def test_hygiene_and_public_sanitation_have_budget_cost():
+def test_sanitation_deteriorates_without_resident_intervention():
     world = World(42)
     for _ in range(240):
         world.step()
@@ -15,14 +15,14 @@ def test_hygiene_and_public_sanitation_have_budget_cost():
     state["sanitation"] = 50
     world.tick = 260
     update_public_health(world)
-    assert state["sanitation"] == 45
+    assert state["sanitation"] == 49
     state["treasury"] = 20
     world.tick = 280
     update_public_health(world)
-    assert state["sanitation"] > 45
+    assert state["sanitation"] == 48
 
 
-def test_hospital_requires_school_and_funding():
+def test_hospitals_are_not_automatically_prescribed():
     world = World(42)
     for _ in range(240):
         world.step()
@@ -38,7 +38,7 @@ def test_hospital_requires_school_and_funding():
     state["institutions"] = ["school"]
     world.tick = 280
     update_public_health(world)
-    assert state["hospital"]
+    assert not state["hospital"]
 
 
 def test_school_archives_survive_inventor_and_save(tmp_path):
