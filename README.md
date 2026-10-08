@@ -141,3 +141,7 @@ Each inhabitant has a deterministic utility-based brain. Needs drive eating and 
 ## v0.6.1 — Social personalities (proposed)
 
 Each resident has deterministic curiosity, sociability, caution and ambition. Nearby residents build or lose mutual trust, and family members form stronger ties. Relationship memory is bounded to 24 contacts and persisted across restart. This is an initial rule-based social layer, not LLM dialogue or human-level autonomy.
+
+## v0.6.2 — Emergent society (proposed)
+
+Residents independently select from six jobs using their personalities, skills and shortages: farmer, woodcutter, miner, trader, builder and scholar. They maintain long-term aspirations and gradually improve profession skills. Trusted nearby acquaintances exchange small amounts of knowledge and form voluntary groups. Every 100 simulation ticks, adults within a state's actual territorial influence vote on its conservation, development, balanced or mutual-aid law; election tallies and enactment dates are recorded. New per-person knowledge and community metadata survive JSON save/restore. This is a compact deterministic societal simulation; there is no natural-language legal drafting, actual enforcement of laws, or full economic occupations yet.
