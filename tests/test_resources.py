@@ -12,7 +12,8 @@ def test_resource_geography_and_limits(tmp_path):
         b.step()
     assert a.snapshot() == b.snapshot()
     assert all(0 <= d["remaining"] <= d["capacity"] for d in a.deposits)
-    assert all(d["renewable"] == CATALOG[d["kind"]]["renewable"] for d in a.deposits)
+    from eonverse.resource_catalog import RAW_RESOURCES
+    assert all(d["renewable"] == RAW_RESOURCES[d["kind"]]["renewable"] for d in a.deposits)
     file = tmp_path / "world.json"
     save_world(a, file)
     loaded = load_world(file)
