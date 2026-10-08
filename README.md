@@ -197,3 +197,7 @@ Nearby adults may form goal-aligned associations when both parties trust each ot
 ## v0.7.5–v0.7.7 — Negotiated cooperation (proposed)
 
 Voluntary associations now negotiate generic contribution rules by majority based on members' circumstances, interests and ability to pay. Contributed coins move into bounded group pools without creating money. Associations preserve agreements and stability across world ticks, evaluate changing member conditions and track cooperative or competitive relations among groups that share a need. No specific civic or medical institution is unlocked by these rules: persistence denotes an abstract association, not an automatic clinic or government. Rules remain constrained to a generic contribution vocabulary, not unconstrained language or institution invention.
+
+## v0.7.8–v0.8.0 — Culture and abstract mechanics
+
+Repeated voluntary group practices can become stable customs without preset ceremonial templates. Researchers test combinations of two to four existing physical principles and spend real inventory and treasury funds. An abstract deterministic mechanics model evaluates output, energy loss and stress; good combinations are archived. This is intentionally **not** a true rigid-body physics engine or unbounded generative invention system. Tests cover composition, material conservation, culture and save/replay.
