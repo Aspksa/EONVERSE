@@ -31,7 +31,7 @@ def update_industry(world):
             world.history.append(f"Day {world.tick}: expedition from {state['name']} discovered {target['kind']}")
         # Research requires actual funding and is deliberately bounded.
         level = state["extraction_technology"]
-        research_cost = 25 * level
+        research_cost = round(25 * level * (1 - state.get("civic_effects", {}).get("research_discount", 0)), 2)
         if level < 5 and state.get("treasury", 0) >= research_cost + 15:
             state["treasury"] = round(state["treasury"] - research_cost, 2)
             state["extraction_technology"] += 1

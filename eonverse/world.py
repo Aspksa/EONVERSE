@@ -21,6 +21,8 @@ from .road_grid import built_road_tiles, ports_snapshot
 from .cognition import think, act
 from .social import personality, update_social
 from .society import update_society
+from .civic import update_civic
+from .inventions import update_inventions
 
 
 @dataclass
@@ -173,6 +175,7 @@ class World:
         update_civilizations(self)
         update_politics(self)
         update_society(self)
+        update_civic(self)
         update_economy(self)
         update_diplomacy(self)
         update_warfare(self)
@@ -183,6 +186,7 @@ class World:
         update_resource_trade(self)
         update_shipments(self)
         update_industry(self)
+        update_inventions(self)
         additions = self.history[len(old_history):]
         self.chronicle.extend(additions)
         self.chronicle = self.chronicle[-500:]
