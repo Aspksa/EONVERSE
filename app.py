@@ -90,8 +90,10 @@ def require_local_admin(request: Request):
         raise HTTPException(403, "Use localhost")
     origin = request.headers.get("origin", "")
     parsed = urlsplit(origin)
-    if parsed.scheme != request.url.scheme or parsed.netloc != request.headers.get("host", ""):
+    if origin and (parsed.scheme != request.url.scheme or parsed.netloc != request.headers.get("host", "")):
         raise HTTPException(403, "Invalid browser origin")
+    if request.method != "GET" and not origin:
+        raise HTTPException(403, "Browser origin required")
     if request.headers.get("X-Eonverse-Local-Settings") != "1":
         raise HTTPException(403, "Settings confirmation required")
 
