@@ -53,3 +53,23 @@ def test_hunger_damages_health_before_death():
     world.step()
     survivor = next(p for p in world.residents if p.id == person.id)
     assert 0 < survivor.health < 100
+
+
+def test_unfunded_settlement_still_generates_testable_observation():
+    from eonverse.open_thinking import update_open_thinking
+    world = World(42)
+    state, resident = _state(world)
+    world.residents = [resident]
+    resident.age = 25
+    resident.coins = 0
+    state["treasury"] = 0
+    world.tick = 40
+    update_open_thinking(world)
+    pending = state.get("pending_hypothesis")
+    assert pending is not None
+    assert pending["control"] == "observation"
+    assert state["treasury"] == 0
+    world.tick = 80
+    update_open_thinking(world)
+    assert state["hypotheses"][0]["status"] == "tested"
+    assert resident.memory.get("personal_causal_models")
